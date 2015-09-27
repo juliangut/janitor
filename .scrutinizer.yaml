@@ -60,7 +60,7 @@ checks:
 tools:
   external_code_coverage:
     timeout: 600
-  php_code_coverage: true
+  php_code_coverage: false
   php_code_sniffer:
     config:
       include_standards:
@@ -83,4 +83,4 @@ tools:
 
 before_commands:
   - 'composer self-update'
-  - 'composer install --no-interaction --prefer-source'
+  - 'composer install -n --prefer-source'
