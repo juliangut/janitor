@@ -1,0 +1,25 @@
+{
+  "name": "juliangut-janitor",
+  "description": "Maintenance mode",
+  "keywords": [
+    "php"
+  ],
+  "homepage": "http://juliangut.com/janitor",
+  "author": {
+    "name": "Julián Gutiérrez",
+    "email": "juliangut@gmail.com",
+    "url": "https://github.com/juliangut/janitor"
+    
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "load-grunt-tasks": "~0.6.0",
+    "grunt-phplint": "~0.0.5",
+    "grunt-phpunit": "~0.3.5",
+    "grunt-phpcs": "~0.2.3",
+    "grunt-phpmd": "~0.1.1",
+    "grunt-phpcpd": "~0.1.3",
+    "time-grunt": "~1.1.1"
+  }
+}
