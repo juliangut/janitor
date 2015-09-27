@@ -8,7 +8,7 @@
 
 # Janitor
 
-Maintenance mode
+Effortless maintenance management.
 
 ## Installation
 
