@@ -16,7 +16,7 @@ matrix:
 
 install:
   - travis_retry composer self-update
-  - travis_retry composer install --no-interaction --prefer-source
+  - travis_retry composer install -n --prefer-source
 
 script:
   - ./vendor/bin/phpcs --standard=./phpcs.xml ./src
