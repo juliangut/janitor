@@ -24,7 +24,7 @@ Then require_once the autoload file:
 require_once './vendor/autoload.php';
 ```
 
-## Use
+## Usage
 
 Provide conditions for maintenance activation (with _watchers_) and conditions to bypass maintenance mode (with _excluders_)
 
@@ -61,81 +61,6 @@ $janitor = new Janitor($watchers, $excluders);
 if ($janitor->handle()) {
     die; // Headers and content already sent
 }
-```
-
-### Integration
-
-#### Slim3
-
-```php
-// Configure watchers and excluders
-$janitor = new \Janitor\Janitor($watchers, $excluders);
-
-$app->add(function($request, $response, $next, callable $next) use ($janitor) {
-    if ($janitor->inMaintenance() && !$janitor->isExcluded()) {
-        $watcher = $janitor->getActiveWatcher();
-
-        // Handle maintenance mode
-        $message = 'Maintenance mode is active';
-        if ($watcher instanceof \Janitor\ScheduledWatcher) {
-            $message = 'Maintenance mode is active until' . $watcher->getEnd()->format('Y/m/d H:i:s');
-        }
-
-        $body = new \Slim\Http\Body;
-        $body->write($message);
-
-        return $response->withStatus(503)->withBody($body);
-    }
-
-    return $next($request, $response);
-});
-```
-
-#### StackPHP
-
-```php
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-class Maintenance implements HttpKernelInterface
-{
-    private $app;
-    private $janitor;
-
-    public function __construct(HttpKernelInterface $app, \Janitor\Janitor $janitor)
-    {
-        $this->app = $app;
-        $this->janitor = $janitor;
-    }
-
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
-    {
-        if ($this->janitor->inMaintenance() && !$this->janitor->isExcluded()) {
-            $watcher = $this->janitor->getActiveWatcher();
-
-            // Handle maintenance mode
-            $message = 'Maintenance mode is active';
-            if ($watcher instanceof \Janitor\ScheduledWatcher) {
-                $message = 'Maintenance mode is active until' . $watcher->getEnd()->format('Y/m/d H:i:s');
-            }
-
-            return new Response($message, 503);
-        }
-
-        return $this->app->handle($request, $type, $catch);
-    }
-}
-```
-
-```php
-// Configure watchers and excluders
-$janitor = new \Janitor\Janitor($watchers, $excluders);
-
-$stack = (new Stack\Builder())
-    ->push('\Maintenance', $janitor);
-
-$app = $stack->resolve($app);
 ```
 
 ## Watchers
@@ -222,6 +147,88 @@ Two strategies are suplied by default to handle maintenance mode if Janitor is a
 
 ```php
 $janitor->setStrategy(new YourAwesomeStrategy);
+```
+
+## Integration
+
+### Slim3
+
+```php
+use Janitor\Janitor;
+use Janitor\ScheduledWatcher;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Body;
+
+// Initialize Janitor with watchers and excluders
+$janitor = new Janitor($watchers, $excluders);
+
+// Add middleware
+$app->add(function(RequestInterface $request, ResponseInterface $response, callable $next) use ($janitor) {
+    if ($janitor->inMaintenance() && !$janitor->isExcluded()) {
+        $watcher = $janitor->getActiveWatcher();
+
+        // Handle maintenance mode
+        $message = 'Maintenance mode is active';
+        if ($watcher instanceof ScheduledWatcher) {
+            $message = 'Maintenance mode is active until' . $watcher->getEnd()->format('Y/m/d H:i:s');
+        }
+
+        $body = new Body;
+        $body->write($message);
+
+        return $response->withStatus(503)->withBody($body);
+    }
+
+    return $next($request, $response);
+});
+```
+
+### StackPHP
+
+```php
+use Janitor\Janitor;
+use Janitor\ScheduledWatcher;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class Maintenance implements HttpKernelInterface
+{
+    private $app;
+    private $janitor;
+
+    public function __construct(HttpKernelInterface $app, Janitor $janitor)
+    {
+        $this->app = $app;
+        $this->janitor = $janitor;
+    }
+
+    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
+    {
+        if ($this->janitor->inMaintenance() && !$this->janitor->isExcluded()) {
+            $watcher = $this->janitor->getActiveWatcher();
+
+            // Handle maintenance mode
+            $message = 'Maintenance mode is active';
+            if ($watcher instanceof ScheduledWatcher) {
+                $message = 'Maintenance mode is active until' . $watcher->getEnd()->format('Y/m/d H:i:s');
+            }
+
+            return new Response($message, 503);
+        }
+
+        return $this->app->handle($request, $type, $catch);
+    }
+}
+
+// Initialize Janitor with watchers and excluders
+$janitor = new Janitor($watchers, $excluders);
+
+$stack = (new \Stack\Builder())
+    ->push('\Maintenance', $janitor);
+
+$app = $stack->resolve($app);
 ```
 
 ## Contributing
