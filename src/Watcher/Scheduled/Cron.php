@@ -10,6 +10,11 @@ namespace Janitor\Watcher\Scheduled;
 
 use Janitor\ScheduledWatcher;
 use Cron\CronExpression;
+use DateTime;
+use DateInterval;
+use Exception;
+use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Cron syntax scheduled maintenance status provider.
@@ -29,6 +34,8 @@ use Cron\CronExpression;
  */
 class Cron implements ScheduledWatcher
 {
+    use ScheduledTrait;
+
     /**
      * Special cron expression shorthands.
      */
@@ -70,11 +77,13 @@ class Cron implements ScheduledWatcher
     /**
      * @param \Cron\CronExpression|string $expression
      * @param \DateInterval|string $interval
+     * @param mixed $timeZone
      */
-    public function __construct($expression, $interval)
+    public function __construct($expression, $interval, $timeZone = null)
     {
         $this->setExpression($expression);
         $this->setInterval($interval);
+        $this->setTimeZone($timeZone);
     }
 
     /**
@@ -82,12 +91,12 @@ class Cron implements ScheduledWatcher
      */
     public function isActive()
     {
-        $now = new \DateTime();
+        $now = new DateTime('now', $this->getTimeZone());
 
         try {
             $limitDate = $this->expression->getPreviousRunDate($now, 0, true);
             $limitDate->add($this->interval);
-        } catch (\RuntimeException $exception) {
+        } catch (RuntimeException $exception) {
             return false;
         }
 
@@ -100,8 +109,10 @@ class Cron implements ScheduledWatcher
     public function getScheduledTimes($count = 5)
     {
         try {
-            $runDates = $this->expression->getMultipleRunDates($count);
-        } catch (\RuntimeException $exception) {
+            $now = new DateTime('now', $this->getTimeZone());
+
+            $runDates = $this->expression->getMultipleRunDates($count, $now);
+        } catch (RuntimeException $exception) {
             return [];
         }
 
@@ -127,8 +138,10 @@ class Cron implements ScheduledWatcher
     public function isScheduled()
     {
         try {
-            return $this->expression->getNextRunDate() instanceof \DateTime;
-        } catch (\Exception $exception) {
+            $now = new DateTime('now', $this->getTimeZone());
+
+            return $this->expression->getNextRunDate($now) instanceof DateTime;
+        } catch (Exception $exception) {
             return false;
         }
     }
@@ -142,7 +155,9 @@ class Cron implements ScheduledWatcher
             return null;
         }
 
-        return $this->expression->getPreviousRunDate(new \DateTime, 0, true);
+        $now = new DateTime('now', $this->getTimeZone());
+
+        return $this->expression->getPreviousRunDate($now, 0, true);
     }
 
     /**
@@ -154,7 +169,9 @@ class Cron implements ScheduledWatcher
             return null;
         }
 
-        $end = $this->expression->getPreviousRunDate(new \DateTime, 0, true);
+        $now = new DateTime('now', $this->getTimeZone());
+
+        $end = $this->expression->getPreviousRunDate($now, 0, true);
         $end->add($this->interval);
 
         return $end;
@@ -171,8 +188,8 @@ class Cron implements ScheduledWatcher
         if (!$expression instanceof CronExpression) {
             try {
                 $this->expression = CronExpression::factory($expression);
-            } catch (\Exception $exception) {
-                throw new \InvalidArgumentException(
+            } catch (Exception $exception) {
+                throw new InvalidArgumentException(
                     sprintf('"%s" is not a valid cron expression', $expression)
                 );
             }
@@ -203,11 +220,11 @@ class Cron implements ScheduledWatcher
      */
     public function setInterval($interval)
     {
-        if (!$interval instanceof \DateInterval) {
+        if (!$interval instanceof DateInterval) {
             try {
-                $interval = new \DateInterval($interval);
-            } catch (\Exception $exception) {
-                throw new \InvalidArgumentException(
+                $interval = new DateInterval($interval);
+            } catch (Exception $exception) {
+                throw new InvalidArgumentException(
                     sprintf('"%s" is not a valid DateInterval string definition', $interval)
                 );
             }
