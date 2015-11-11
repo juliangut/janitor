@@ -1,9 +1,9 @@
 [![Latest Version](https://img.shields.io/packagist/vpre/juliangut/janitor.svg?style=flat-square)](https://packagist.org/packages/juliangut/janitor)
-[![License](https://img.shields.io/packagist/l/juliangut/janitor.svg?style=flat-square)](https://github.com/juliangut/janitor/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/juliangut/janitor.svg?style=flat-square)](https://github.com/juliangut/janitor/blob/master/LICENSE)
 
 [![Build status](https://img.shields.io/travis/juliangut/janitor.svg?style=flat-square)](https://travis-ci.org/juliangut/janitor)
 [![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/janitor.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/janitor)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/juliangut/janitor.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/janitor)
+[![Code Coverage](https://img.shields.io/coveralls/juliangut/slim-doctrine.svg?style=flat-square)](https://coveralls.io/github/juliangut/janitor)
 [![Total Downloads](https://img.shields.io/packagist/dt/juliangut/janitor.svg?style=flat-square)](https://packagist.org/packages/juliangut/janitor)
 
 # Janitor
