@@ -233,10 +233,10 @@ $app = $stack->resolve($app);
 
 ## Contributing
 
-Found a bug or have a feature request? [Please open a new issue](./issues). Have a look at existing issues before.
+Found a bug or have a feature request? [Please open a new issue](https://github.com/juliangut/janitor/issues). Have a look at existing issues before.
 
-See file [CONTRIBUTING.md](CONTRIBUTING.md)
+See file [CONTRIBUTING.md](https://github.com/juliangut/janitor/blob/master/CONTRIBUTING.md)
 
 ## License
 
-See file [LICENSE](LICENSE) included with the source code for a copy of the license terms.
+See file [LICENSE](https://github.com/juliangut/janitor/blob/master/LICENSE) included with the source code for a copy of the license terms.
