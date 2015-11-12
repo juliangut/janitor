@@ -36,11 +36,12 @@ class Janitor
     /**
      * @param array $watchers
      * @param array $excluders
+     * @param Janitor\Strategy $strategy
      */
     public function __construct(array $watchers = [], array $excluders = [], Strategy $strategy = null)
     {
-        foreach ($watchers as $rocessor) {
-            $this->addWatcher($rocessor);
+        foreach ($watchers as $watcher) {
+            $this->addWatcher($watcher);
         }
 
         foreach ($excluders as $excluder) {

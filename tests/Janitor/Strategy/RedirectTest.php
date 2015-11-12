@@ -26,6 +26,6 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
 
         ob_start();
         $strategy->handle($watcher);
-        $return = ob_get_clean();
+        ob_get_clean();
     }
 }

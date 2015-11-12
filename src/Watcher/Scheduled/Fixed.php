@@ -58,11 +58,7 @@ class Fixed implements ScheduledWatcher
     {
         $now = new DateTime();
 
-        if ($now < $this->start || $this->end < $now) {
-            return false;
-        }
-
-        return true;
+        return !($now < $this->start || $this->end < $now);
     }
 
     /**
