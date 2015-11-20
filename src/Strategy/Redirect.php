@@ -29,7 +29,7 @@ class Redirect implements StrategyInterface
     /**
      * {@inheritDoc}
      */
-    public function handle(Watcher $procesor)
+    public function handle(Watcher $watcher)
     {
         if (!headers_sent()) {
             header('Location: ' . $this->location);
