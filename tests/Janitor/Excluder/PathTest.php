@@ -21,9 +21,9 @@ class PathTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
-     * @covers Janitor\Excluder\Path::__construct
-     * @covers Janitor\Excluder\Path::addPath
-     * @covers Janitor\Excluder\Path::isExcluded
+     * @covers \Janitor\Excluder\Path::__construct
+     * @covers \Janitor\Excluder\Path::addPath
+     * @covers \Janitor\Excluder\Path::isExcluded
      */
     public function testIsExcluded()
     {
@@ -36,7 +36,7 @@ class PathTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Excluder\Path::isExcluded
+     * @covers \Janitor\Excluder\Path::isExcluded
      */
     public function testIsNotExcluded()
     {

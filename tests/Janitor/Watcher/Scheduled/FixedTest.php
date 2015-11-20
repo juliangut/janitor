@@ -11,7 +11,7 @@ namespace Janitor\Test\Watcher\Scheduled;
 use Janitor\Watcher\Scheduled\Fixed;
 
 /**
- * @covers Janitor\Watcher\Scheduled\Fixed
+ * @covers \Janitor\Watcher\Scheduled\Fixed
  */
 class FixedTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,10 +23,10 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers Janitor\Watcher\Scheduled\Fixed::isScheduled
-     * @covers Janitor\Watcher\Scheduled\Fixed::getScheduledTimes
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
+     * @covers \Janitor\Watcher\Scheduled\Fixed::getScheduledTimes
      */
     public function testDefaults()
     {
@@ -36,10 +36,10 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers Janitor\Watcher\Scheduled\Fixed::getStart
-     * @covers Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @covers Janitor\Watcher\Scheduled\Fixed::getEnd
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     * @covers \Janitor\Watcher\Scheduled\Fixed::getStart
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     * @covers \Janitor\Watcher\Scheduled\Fixed::getEnd
      */
     public function testMutatorsAccessors()
     {
@@ -54,9 +54,9 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     * @expectedException \InvalidArgumentException
      */
     public function testInvalidStartDate()
     {
@@ -68,8 +68,8 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setStart
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     * @expectedException \InvalidArgumentException
      */
     public function testInvalidStartString()
     {
@@ -77,9 +77,9 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     * @expectedException \InvalidArgumentException
      */
     public function testInvalidEndDate()
     {
@@ -91,8 +91,8 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     * @expectedException \InvalidArgumentException
      */
     public function testInvalidEndString()
     {
@@ -100,9 +100,9 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers Janitor\Watcher\Scheduled\Fixed::isScheduled
-     * @covers Janitor\Watcher\Scheduled\Fixed::getScheduledTimes
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
+     * @covers \Janitor\Watcher\Scheduled\Fixed::getScheduledTimes
      */
     public function testScheduledTime()
     {
@@ -124,10 +124,10 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @covers Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers Janitor\Watcher\Scheduled\Fixed::isScheduled
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
      */
     public function testBeforeTime()
     {
@@ -141,10 +141,10 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @covers Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers Janitor\Watcher\Scheduled\Fixed::isScheduled
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
+     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
      */
     public function testAfterTime()
     {
