@@ -17,7 +17,7 @@ use RuntimeException;
 use InvalidArgumentException;
 
 /**
- * Cron syntax scheduled maintenance status provider.
+ * Cron syntax scheduled maintenance status watcher.
  *
  * Maintenance mode is considered to be On if current date is in the interval
  * initiated by a crontab expression

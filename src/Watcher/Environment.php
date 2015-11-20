@@ -11,7 +11,7 @@ namespace Janitor\Watcher;
 use Janitor\Watcher as WatcherInterface;
 
 /**
- * Environment variable check for maintenance status provider.
+ * Environment variable check for maintenance status watcher.
  */
 class Environment implements WatcherInterface
 {

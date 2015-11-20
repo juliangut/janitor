@@ -30,9 +30,9 @@ class PathTest extends \PHPUnit_Framework_TestCase
         $pathProvider = $this->getMock('Janitor\\Provider\\Path\\Basic');
         $pathProvider->expects($this->once())->method('getPath')->will($this->returnValue('/user'));
 
-        $exclusion = new Path($this->excludedPaths, $pathProvider);
+        $excluder = new Path($this->excludedPaths, $pathProvider);
 
-        $this->assertTrue($exclusion->isExcluded());
+        $this->assertTrue($excluder->isExcluded());
     }
 
     /**
@@ -43,8 +43,8 @@ class PathTest extends \PHPUnit_Framework_TestCase
         $pathProvider = $this->getMock('Janitor\\Provider\\Path\\Basic');
         $pathProvider->expects($this->once())->method('getPath')->will($this->returnValue('/home'));
 
-        $exclusion = new Path($this->excludedPaths, $pathProvider);
+        $excluder = new Path($this->excludedPaths, $pathProvider);
 
-        $this->assertFalse($exclusion->isExcluded());
+        $this->assertFalse($excluder->isExcluded());
     }
 }

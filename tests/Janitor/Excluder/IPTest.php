@@ -29,8 +29,8 @@ class IPTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreation()
     {
-        $exclusion = new IP();
-        $this->assertFalse($exclusion->isExcluded());
+        $excluder = new IP();
+        $this->assertFalse($excluder->isExcluded());
 
         new IP(['invalidIP']);
     }
@@ -45,9 +45,9 @@ class IPTest extends \PHPUnit_Framework_TestCase
         $ipProvider = $this->getMock('Janitor\\Provider\\IP\\Basic');
         $ipProvider->expects($this->once())->method('getIpAddress')->will($this->returnValue('98.139.183.24'));
 
-        $exclusion = new IP($this->excludedIPs, $ipProvider);
+        $excluder = new IP($this->excludedIPs, $ipProvider);
 
-        $this->assertTrue($exclusion->isExcluded());
+        $this->assertTrue($excluder->isExcluded());
     }
 
     /**
@@ -58,8 +58,8 @@ class IPTest extends \PHPUnit_Framework_TestCase
         $ipProvider = $this->getMock('Janitor\\Provider\\IP\\Basic');
         $ipProvider->expects($this->once())->method('getIpAddress')->will($this->returnValue('127.0.0.1'));
 
-        $exclusion = new IP($this->excludedIPs, $ipProvider);
+        $excluder = new IP($this->excludedIPs, $ipProvider);
 
-        $this->assertFalse($exclusion->isExcluded());
+        $this->assertFalse($excluder->isExcluded());
     }
 }

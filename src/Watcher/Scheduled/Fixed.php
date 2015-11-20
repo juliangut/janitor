@@ -14,7 +14,7 @@ use Exception;
 use InvalidArgumentException;
 
 /**
- * Fixed date scheduled maintenance status provider.
+ * Fixed date scheduled maintenance status watcher.
  *
  * Maintenance mode is considered to be On if current date is
  *   - higher than start if only start is defined
