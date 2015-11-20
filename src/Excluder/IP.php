@@ -41,10 +41,6 @@ class IP implements ExcluderInterface
             $this->addIP($ipAddress);
         }
 
-        if (!$provider instanceof IPProvider) {
-            $provider = new BasicIPProvider();
-        }
-
         $this->provider = $provider;
     }
 
@@ -53,6 +49,10 @@ class IP implements ExcluderInterface
      */
     public function isExcluded()
     {
+        if (!$this->provider instanceof IPProvider) {
+            $this->provider = new BasicIPProvider();
+        }
+
         $currentIP = $this->provider->getIPAddress();
 
         foreach ($this->ips as $ip) {

@@ -24,11 +24,14 @@ class IPTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Janitor\Excluder\IP::__construct
      * @covers Janitor\Excluder\IP::addIP
+     * @covers Janitor\Excluder\IP::isExcluded
      * @expectedException InvalidArgumentException
      */
-    public function testCreationInvalidIP()
+    public function testCreation()
     {
-        new IP();
+        $exclusion = new IP();
+        $this->assertFalse($exclusion->isExcluded());
+
         new IP(['invalidIP']);
     }
 

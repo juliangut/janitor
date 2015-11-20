@@ -41,10 +41,6 @@ class Path implements ExcluderInterface
             $this->addPath($path);
         }
 
-        if (!$provider instanceof PathProvider) {
-            $provider = new BasicPathProvider();
-        }
-
         $this->provider = $provider;
     }
 
@@ -53,6 +49,10 @@ class Path implements ExcluderInterface
      */
     public function isExcluded()
     {
+        if (!$this->provider instanceof PathProvider) {
+            $this->provider = new BasicPathProvider();
+        }
+
         $currentPath = '/' . trim($this->provider->getPath(), '/');
 
         foreach ($this->paths as $path) {

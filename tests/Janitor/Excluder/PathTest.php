@@ -23,15 +23,6 @@ class PathTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Janitor\Excluder\Path::__construct
      * @covers Janitor\Excluder\Path::addPath
-     */
-    public function testCreationInvalidIP()
-    {
-        new Path;
-    }
-
-    /**
-     * @covers Janitor\Excluder\Path::__construct
-     * @covers Janitor\Excluder\Path::addPath
      * @covers Janitor\Excluder\Path::isExcluded
      */
     public function testIsExcluded()
