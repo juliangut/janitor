@@ -35,9 +35,9 @@ class Janitor
     protected $strategy;
 
     /**
-     * @param array             $watchers
-     * @param array             $excluders
-     * @param \Janitor\Strategy $strategy
+     * @param array                  $watchers
+     * @param array                  $excluders
+     * @param \Janitor\Strategy|null $strategy
      */
     public function __construct(array $watchers = [], array $excluders = [], Strategy $strategy = null)
     {

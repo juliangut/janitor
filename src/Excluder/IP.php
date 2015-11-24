@@ -34,8 +34,8 @@ class IP implements ExcluderInterface
     protected $provider;
 
     /**
-     * @param array                $ips
-     * @param \Janitor\Provider\IP $provider
+     * @param array                     $ips
+     * @param \Janitor\Provider\IP|null $provider
      */
     public function __construct(array $ips = [], IPProvider $provider = null)
     {

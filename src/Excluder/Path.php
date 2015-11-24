@@ -33,8 +33,8 @@ class Path implements ExcluderInterface
     protected $provider;
 
     /**
-     * @param array                  $paths
-     * @param \Janitor\Provider\Path $provider
+     * @param array                       $paths
+     * @param \Janitor\Provider\Path|null $provider
      */
     public function __construct(array $paths = [], PathProvider $provider = null)
     {

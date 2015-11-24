@@ -71,7 +71,7 @@ class Cron implements ScheduledWatcher
     /**
      * Maintenance mode interval time.
      *
-     * @var string
+     * @var \DateInterval
      */
     protected $interval;
 
