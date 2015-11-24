@@ -11,12 +11,12 @@ namespace Janitor\Test\Provider\Path;
 use Janitor\Provider\Path\Basic;
 
 /**
- * @covers Janitor\Provider\Path\Basic
+ * @covers \Janitor\Provider\Path\Basic
  */
 class BasicTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Janitor\Provider\Path\Basic::getPath
+     * @covers \Janitor\Provider\Path\Basic::getPath
      */
     public function testPathExtraction()
     {

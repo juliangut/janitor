@@ -22,41 +22,44 @@ class IPTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
-     * @covers Janitor\Excluder\IP::__construct
-     * @covers Janitor\Excluder\IP::addIP
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Excluder\IP::__construct
+     * @covers \Janitor\Excluder\IP::addIP
+     * @covers \Janitor\Excluder\IP::isExcluded
+     * @expectedException \InvalidArgumentException
      */
-    public function testCreationInvalidIP()
+    public function testCreation()
     {
-        new IP();
+        $excluder = new IP();
+        $this->assertFalse($excluder->isExcluded());
+
         new IP(['invalidIP']);
     }
 
     /**
-     * @covers Janitor\Excluder\IP::__construct
-     * @covers Janitor\Excluder\IP::addIP
-     * @covers Janitor\Excluder\IP::isExcluded
+     * @covers \Janitor\Excluder\IP::__construct
+     * @covers \Janitor\Excluder\IP::addIP
+     * @covers \Janitor\Excluder\IP::isExcluded
      */
     public function testIsExcluded()
     {
         $ipProvider = $this->getMock('Janitor\\Provider\\IP\\Basic');
         $ipProvider->expects($this->once())->method('getIpAddress')->will($this->returnValue('98.139.183.24'));
 
-        $exclusion = new IP($this->excludedIPs, $ipProvider);
+        $excluder = new IP($this->excludedIPs, $ipProvider);
 
-        $this->assertTrue($exclusion->isExcluded());
+        $this->assertTrue($excluder->isExcluded());
     }
 
     /**
-     * @covers Janitor\Excluder\IP::isExcluded
+     * @covers \Janitor\Excluder\IP::isExcluded
      */
     public function testIsNotExcluded()
     {
         $ipProvider = $this->getMock('Janitor\\Provider\\IP\\Basic');
         $ipProvider->expects($this->once())->method('getIpAddress')->will($this->returnValue('127.0.0.1'));
 
-        $exclusion = new IP($this->excludedIPs, $ipProvider);
+        $excluder = new IP($this->excludedIPs, $ipProvider);
 
-        $this->assertFalse($exclusion->isExcluded());
+        $this->assertFalse($excluder->isExcluded());
     }
 }

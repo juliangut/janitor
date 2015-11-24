@@ -11,12 +11,12 @@ namespace Janitor\Test\Provider\Ip;
 use Janitor\Provider\IP\Basic;
 
 /**
- * @covers Janitor\Provider\IP\Basic
+ * @covers \Janitor\Provider\IP\Basic
  */
 class BasicTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Janitor\Provider\IP\Basic::getIPAddress
+     * @covers \Janitor\Provider\IP\Basic::getIPAddress
      */
     public function testEmptyIP()
     {
@@ -24,7 +24,7 @@ class BasicTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Provider\IP\Basic::getIPAddress
+     * @covers \Janitor\Provider\IP\Basic::getIPAddress
      */
     public function testByRemoteAddr()
     {
@@ -34,8 +34,8 @@ class BasicTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Provider\IP\Basic::getIPAddress
-     * @covers Janitor\Provider\IP\Basic::getIpFromProxy
+     * @covers \Janitor\Provider\IP\Basic::getIPAddress
+     * @covers \Janitor\Provider\IP\Basic::getIpFromProxy
      */
     public function testByProxy()
     {
@@ -45,7 +45,7 @@ class BasicTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Provider\IP\Basic::getIPAddress
+     * @covers \Janitor\Provider\IP\Basic::getIPAddress
      */
     public function testByHttpClientIP()
     {

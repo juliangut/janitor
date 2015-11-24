@@ -11,7 +11,7 @@ namespace Janitor\Test;
 use Janitor\Janitor;
 
 /**
- * @covers Janitor\Janitor
+ * @covers \Janitor\Janitor
  */
 class JanitorTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,11 +30,11 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Janitor::addWatcher
-     * @covers Janitor\Janitor::addExcluder
-     * @covers Janitor\Janitor::inMaintenance
-     * @covers Janitor\Janitor::getActiveWatcher
-     * @covers Janitor\Janitor::isExcluded
+     * @covers \Janitor\Janitor::addWatcher
+     * @covers \Janitor\Janitor::addExcluder
+     * @covers \Janitor\Janitor::inMaintenance
+     * @covers \Janitor\Janitor::getActiveWatcher
+     * @covers \Janitor\Janitor::isExcluded
      */
     public function testMaintenanceStatus()
     {
@@ -59,7 +59,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Janitor::getScheduledTimes
+     * @covers \Janitor\Janitor::getScheduledTimes
      */
     public function testScheduled()
     {
@@ -96,7 +96,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Janitor::handle
+     * @covers \Janitor\Janitor::handle
      */
     public function testHandle()
     {

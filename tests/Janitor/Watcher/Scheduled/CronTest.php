@@ -23,9 +23,9 @@ class CronTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Cron::setExpression
-     * @covers Janitor\Watcher\Scheduled\Cron::getExpression
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Watcher\Scheduled\Cron::setExpression
+     * @covers \Janitor\Watcher\Scheduled\Cron::getExpression
+     * @expectedException \InvalidArgumentException
      */
     public function testExpressionMutatorsAccessors()
     {
@@ -36,11 +36,11 @@ class CronTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Cron::getStart
-     * @covers Janitor\Watcher\Scheduled\Cron::getEnd
-     * @covers Janitor\Watcher\Scheduled\Cron::setInterval
-     * @covers Janitor\Watcher\Scheduled\Cron::getInterval
-     * @expectedException InvalidArgumentException
+     * @covers \Janitor\Watcher\Scheduled\Cron::getStart
+     * @covers \Janitor\Watcher\Scheduled\Cron::getEnd
+     * @covers \Janitor\Watcher\Scheduled\Cron::setInterval
+     * @covers \Janitor\Watcher\Scheduled\Cron::getInterval
+     * @expectedException \InvalidArgumentException
      */
     public function testIntervalMutatorsAccessors()
     {
@@ -64,7 +64,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Cron::isActive
+     * @covers \Janitor\Watcher\Scheduled\Cron::isActive
      */
     public function testIsNotActive()
     {
@@ -90,7 +90,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Cron::isActive
+     * @covers \Janitor\Watcher\Scheduled\Cron::isActive
      */
     public function testIsActive()
     {
@@ -118,7 +118,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Scheduled\Cron::getScheduledTimes
+     * @covers \Janitor\Watcher\Scheduled\Cron::getScheduledTimes
      */
     public function testScheduledTimes()
     {

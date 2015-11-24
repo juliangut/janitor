@@ -11,12 +11,13 @@ namespace Janitor\Test\Strategy;
 use Janitor\Strategy\Redirect;
 
 /**
- * @covers Janitor\Strategy\Redirect
+ * @covers \Janitor\Strategy\Redirect
  */
 class RedirectTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Janitor\Strategy\Redirect::handle
+     * @covers \Janitor\Strategy\Redirect::__construct
+     * @covers \Janitor\Strategy\Redirect::handle
      * @runInSeparateProcess
      */
     public function testRendering()
@@ -27,5 +28,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
         ob_start();
         $strategy->handle($watcher);
         ob_get_clean();
+
+        $this->assertTrue(true);
     }
 }

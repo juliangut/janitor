@@ -11,7 +11,7 @@ namespace Janitor\Watcher;
 use Janitor\Watcher as WatcherInterface;
 
 /**
- * Manual maintenance status provider.
+ * Manual maintenance status watcher.
  */
 class Manual implements WatcherInterface
 {

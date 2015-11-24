@@ -96,7 +96,7 @@ Scheduled watchers are a special type of watchers that identify a point in time 
 * `Cron` Set periodic maintenance periods using [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression) syntax.
 
 ```php
-$fixedWatcher = new \Janitor\Watcher\Fixed('2016/01/01 00:00:00', '2016/01/01 :01:00:00');
+$fixedWatcher = new \Janitor\Watcher\Fixed('2016/01/01 00:00:00', '2016/01/01 01:00:00');
 // Active only 1st Januarry 2016 for 1 hour
 $fixedWatcher->isActive();
 

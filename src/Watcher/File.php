@@ -11,7 +11,7 @@ namespace Janitor\Watcher;
 use Janitor\Watcher as WatcherInterface;
 
 /**
- * File existance check for maintenance status provider.
+ * File existance check for maintenance status watcher.
  */
 class File implements WatcherInterface
 {

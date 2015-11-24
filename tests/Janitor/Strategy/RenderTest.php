@@ -11,12 +11,12 @@ namespace Janitor\Test\Strategy;
 use Janitor\Strategy\Render;
 
 /**
- * @covers Janitor\Strategy\Render
+ * @covers \Janitor\Strategy\Render
  */
 class RenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Janitor\Strategy\Render::handle
+     * @covers \Janitor\Strategy\Render::handle
      * @runInSeparateProcess
      */
     public function testRenderingNotActive()
@@ -36,7 +36,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Strategy\Render::handle
+     * @covers \Janitor\Strategy\Render::handle
      * @runInSeparateProcess
      */
     public function testRenderingActive()
@@ -56,7 +56,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Strategy\Render::handle
+     * @covers \Janitor\Strategy\Render::handle
      * @runInSeparateProcess
      */
     public function testRenderingScheduled()

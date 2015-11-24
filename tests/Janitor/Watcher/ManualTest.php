@@ -11,7 +11,7 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\Manual;
 
 /**
- * @covers Janitor\Watcher\Manual
+ * @covers \Janitor\Watcher\Manual
  */
 class ManualTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,8 +23,8 @@ class ManualTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Manual::setActive
-     * @covers Janitor\Watcher\Manual::isActive
+     * @covers \Janitor\Watcher\Manual::setActive
+     * @covers \Janitor\Watcher\Manual::isActive
      */
     public function testMutatorsAccessors()
     {

@@ -11,7 +11,7 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\File;
 
 /**
- * @covers Janitor\Watcher\File
+ * @covers \Janitor\Watcher\File
  */
 class FileTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,7 +37,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\File::getFile
+     * @covers \Janitor\Watcher\File::getFile
      */
     public function testAccessors()
     {
@@ -45,8 +45,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\File::setFile
-     * @covers Janitor\Watcher\File::isActive
+     * @covers \Janitor\Watcher\File::setFile
+     * @covers \Janitor\Watcher\File::isActive
      */
     public function testIsActive()
     {
@@ -54,8 +54,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\File::setFile
-     * @covers Janitor\Watcher\File::isActive
+     * @covers \Janitor\Watcher\File::setFile
+     * @covers \Janitor\Watcher\File::isActive
      */
     public function testIsNotActive()
     {

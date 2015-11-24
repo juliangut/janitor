@@ -21,39 +21,30 @@ class PathTest extends \PHPUnit_Framework_TestCase
     );
 
     /**
-     * @covers Janitor\Excluder\Path::__construct
-     * @covers Janitor\Excluder\Path::addPath
-     */
-    public function testCreationInvalidIP()
-    {
-        new Path;
-    }
-
-    /**
-     * @covers Janitor\Excluder\Path::__construct
-     * @covers Janitor\Excluder\Path::addPath
-     * @covers Janitor\Excluder\Path::isExcluded
+     * @covers \Janitor\Excluder\Path::__construct
+     * @covers \Janitor\Excluder\Path::addPath
+     * @covers \Janitor\Excluder\Path::isExcluded
      */
     public function testIsExcluded()
     {
         $pathProvider = $this->getMock('Janitor\\Provider\\Path\\Basic');
         $pathProvider->expects($this->once())->method('getPath')->will($this->returnValue('/user'));
 
-        $exclusion = new Path($this->excludedPaths, $pathProvider);
+        $excluder = new Path($this->excludedPaths, $pathProvider);
 
-        $this->assertTrue($exclusion->isExcluded());
+        $this->assertTrue($excluder->isExcluded());
     }
 
     /**
-     * @covers Janitor\Excluder\Path::isExcluded
+     * @covers \Janitor\Excluder\Path::isExcluded
      */
     public function testIsNotExcluded()
     {
         $pathProvider = $this->getMock('Janitor\\Provider\\Path\\Basic');
         $pathProvider->expects($this->once())->method('getPath')->will($this->returnValue('/home'));
 
-        $exclusion = new Path($this->excludedPaths, $pathProvider);
+        $excluder = new Path($this->excludedPaths, $pathProvider);
 
-        $this->assertFalse($exclusion->isExcluded());
+        $this->assertFalse($excluder->isExcluded());
     }
 }

@@ -11,7 +11,7 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\Environment;
 
 /**
- * @covers Janitor\Watcher\Environment
+ * @covers \Janitor\Watcher\Environment
  */
 class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,10 +33,10 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Environment::setVar
-     * @covers Janitor\Watcher\Environment::getVar
-     * @covers Janitor\Watcher\Environment::setValue
-     * @covers Janitor\Watcher\Environment::getValue
+     * @covers \Janitor\Watcher\Environment::setVar
+     * @covers \Janitor\Watcher\Environment::getVar
+     * @covers \Janitor\Watcher\Environment::setValue
+     * @covers \Janitor\Watcher\Environment::getValue
      */
     public function testMutatorsAccessors()
     {
@@ -48,9 +48,9 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Environment::setVar
-     * @covers Janitor\Watcher\Environment::setValue
-     * @covers Janitor\Watcher\Environment::isActive
+     * @covers \Janitor\Watcher\Environment::setVar
+     * @covers \Janitor\Watcher\Environment::setValue
+     * @covers \Janitor\Watcher\Environment::isActive
      */
     public function testIsNotActive()
     {
@@ -67,9 +67,9 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Janitor\Watcher\Environment::setVar
-     * @covers Janitor\Watcher\Environment::setValue
-     * @covers Janitor\Watcher\Environment::isActive
+     * @covers \Janitor\Watcher\Environment::setVar
+     * @covers \Janitor\Watcher\Environment::setValue
+     * @covers \Janitor\Watcher\Environment::isActive
      */
     public function testIsActive()
     {
