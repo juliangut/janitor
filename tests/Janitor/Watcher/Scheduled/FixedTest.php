@@ -156,6 +156,5 @@ class FixedTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($watcher->isActive());
         $this->assertFalse($watcher->isScheduled());
-
     }
 }
