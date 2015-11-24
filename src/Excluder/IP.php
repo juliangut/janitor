@@ -3,6 +3,7 @@
  * Effortless maintenance management (http://juliangut.com/janitor)
  *
  * @link https://github.com/juliangut/janitor for the canonical source repository
+ *
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
@@ -33,7 +34,7 @@ class IP implements ExcluderInterface
     protected $provider;
 
     /**
-     * @param array $ips
+     * @param array                $ips
      * @param \Janitor\Provider\IP $provider
      */
     public function __construct(array $ips = [], IPProvider $provider = null)
@@ -46,7 +47,7 @@ class IP implements ExcluderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isExcluded()
     {
@@ -69,6 +70,7 @@ class IP implements ExcluderInterface
      * Add IP.
      *
      * @param string $ipAddress
+     *
      * @throws \InvalidArgumentException
      */
     public function addIP($ipAddress)

@@ -3,6 +3,7 @@
  * Effortless maintenance management (http://juliangut.com/janitor)
  *
  * @link https://github.com/juliangut/janitor for the canonical source repository
+ *
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
@@ -32,7 +33,7 @@ class Path implements ExcluderInterface
     protected $provider;
 
     /**
-     * @param array $paths
+     * @param array                  $paths
      * @param \Janitor\Provider\Path $provider
      */
     public function __construct(array $paths = [], PathProvider $provider = null)
@@ -45,7 +46,7 @@ class Path implements ExcluderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isExcluded()
     {

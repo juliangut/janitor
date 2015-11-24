@@ -3,6 +3,7 @@
  * Effortless maintenance management (http://juliangut.com/janitor)
  *
  * @link https://github.com/juliangut/janitor for the canonical source repository
+ *
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
@@ -76,8 +77,8 @@ class Cron implements ScheduledWatcher
 
     /**
      * @param \Cron\CronExpression|string $expression
-     * @param \DateInterval|string $interval
-     * @param mixed $timeZone
+     * @param \DateInterval|string        $interval
+     * @param mixed                       $timeZone
      */
     public function __construct($expression, $interval, $timeZone = null)
     {
@@ -87,7 +88,7 @@ class Cron implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isActive()
     {
@@ -104,7 +105,7 @@ class Cron implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getScheduledTimes($count = 5)
     {
@@ -133,7 +134,7 @@ class Cron implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isScheduled()
     {
@@ -147,7 +148,7 @@ class Cron implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getStart()
     {
@@ -161,7 +162,7 @@ class Cron implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getEnd()
     {
@@ -181,6 +182,7 @@ class Cron implements ScheduledWatcher
      * Set cron expression.
      *
      * @param \Cron\CronExpression|string $expression
+     *
      * @throws \InvalidArgumentException
      */
     public function setExpression($expression)
@@ -216,6 +218,7 @@ class Cron implements ScheduledWatcher
      * Sets a valid \DateInterval.
      *
      * @param \DateInterval|string $interval
+     *
      * @throws \InvalidArgumentException
      */
     public function setInterval($interval)

@@ -15,10 +15,10 @@ use Janitor\Excluder\Path;
  */
 class PathTest extends \PHPUnit_Framework_TestCase
 {
-    protected $excludedPaths = array(
+    protected $excludedPaths = [
         '/user',
         '/blog/post',
-    );
+    ];
 
     /**
      * @covers \Janitor\Excluder\Path::__construct

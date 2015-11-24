@@ -3,6 +3,7 @@
  * Effortless maintenance management (http://juliangut.com/janitor)
  *
  * @link https://github.com/juliangut/janitor for the canonical source repository
+ *
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
@@ -31,7 +32,7 @@ class Environment implements WatcherInterface
 
     /**
      * @param string $var
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __construct($var, $value = null)
     {
@@ -40,7 +41,7 @@ class Environment implements WatcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isActive()
     {

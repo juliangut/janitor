@@ -3,6 +3,7 @@
  * Effortless maintenance management (http://juliangut.com/janitor)
  *
  * @link https://github.com/juliangut/janitor for the canonical source repository
+ *
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
@@ -29,14 +30,14 @@ class Janitor
     /**
      * Resolve strategy.
      *
-     * @var Janitor\Strategy
+     * @var \Janitor\Strategy
      */
     protected $strategy;
 
     /**
-     * @param array $watchers
-     * @param array $excluders
-     * @param Janitor\Strategy $strategy
+     * @param array             $watchers
+     * @param array             $excluders
+     * @param \Janitor\Strategy $strategy
      */
     public function __construct(array $watchers = [], array $excluders = [], Strategy $strategy = null)
     {
@@ -122,7 +123,7 @@ class Janitor
      *
      * Returns an array of ['start' => \DateTime, 'end' => \DateTime]
      *
-     * @param  integer $count
+     * @param  int $count
      * @return array
      */
     public function getScheduledTimes($count = 5)

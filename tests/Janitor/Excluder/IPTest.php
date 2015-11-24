@@ -15,11 +15,11 @@ use Janitor\Excluder\IP;
  */
 class IPTest extends \PHPUnit_Framework_TestCase
 {
-    protected $excludedIPs = array(
+    protected $excludedIPs = [
         '98.139.183.24',
         '74.125.230.5',
         '204.79.197.200',
-    );
+    ];
 
     /**
      * @covers \Janitor\Excluder\IP::__construct

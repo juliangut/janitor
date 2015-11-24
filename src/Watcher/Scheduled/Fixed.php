@@ -3,6 +3,7 @@
  * Effortless maintenance management (http://juliangut.com/janitor)
  *
  * @link https://github.com/juliangut/janitor for the canonical source repository
+ *
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
@@ -52,7 +53,7 @@ class Fixed implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isActive()
     {
@@ -62,7 +63,7 @@ class Fixed implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getScheduledTimes($count = 5)
     {
@@ -74,12 +75,12 @@ class Fixed implements ScheduledWatcher
             [
                 'start' => $this->start,
                 'end'   => $this->end,
-            ]
+            ],
         ];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isScheduled()
     {
@@ -92,6 +93,7 @@ class Fixed implements ScheduledWatcher
      * Set scheduled start time.
      *
      * @param mixed $start
+     *
      * @throws \InvalidArgumentException
      */
     public function setStart($start)
@@ -114,7 +116,7 @@ class Fixed implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getStart()
     {
@@ -125,6 +127,7 @@ class Fixed implements ScheduledWatcher
      * Set scheduled end time.
      *
      * @param mixed $end
+     *
      * @throws \InvalidArgumentException
      */
     public function setEnd($end)
@@ -147,7 +150,7 @@ class Fixed implements ScheduledWatcher
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getEnd()
     {
