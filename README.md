@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/github/license/juliangut/janitor.svg?style=flat-square)](https://github.com/juliangut/janitor/blob/master/LICENSE)
 
 [![Build status](https://img.shields.io/travis/juliangut/janitor.svg?style=flat-square)](https://travis-ci.org/juliangut/janitor)
+[![Style](https://styleci.io/repos/43243157/shield)](https://styleci.io/repos/43243157)
 [![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/janitor.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/janitor)
 [![Code Coverage](https://img.shields.io/coveralls/juliangut/janitor.svg?style=flat-square)](https://coveralls.io/github/juliangut/janitor)
 [![Total Downloads](https://img.shields.io/packagist/dt/juliangut/janitor.svg?style=flat-square)](https://packagist.org/packages/juliangut/janitor)
