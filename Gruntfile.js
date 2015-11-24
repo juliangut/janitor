@@ -46,6 +46,22 @@ module.exports = function(grunt) {
         dir: 'src'
       }
     },
+    climb: {
+      options: {
+        bin: 'vendor/bin/climb'
+      },
+      application: {
+      }
+    },
+    security_checker: {
+      options: {
+        bin: 'vendor/bin/security-checker',
+        format: 'text'
+      },
+      application: {
+        file: 'composer.json'
+      },
+    },
     phpunit: {
       options: {
         bin: 'vendor/bin/phpunit',
@@ -58,6 +74,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('check', ['phplint', 'phpcs', 'phpmd', 'phpcpd']);
+  grunt.registerTask('security', ['climb', 'security_checker']);
   grunt.registerTask('test', ['phpunit']);
-  grunt.registerTask('default', ['check', 'test']);
+  grunt.registerTask('default', ['check', 'security', 'test']);
 };
