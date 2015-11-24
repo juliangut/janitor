@@ -26,6 +26,7 @@ trait ScheduledTrait
      * Set scheduled time zone.
      *
      * @param mixed $timeZone
+     *
      * @throws \Janitor\Exception\ScheduledException
      */
     public function setTimeZone($timeZone = null)

@@ -123,7 +123,8 @@ class Janitor
      *
      * Returns an array of ['start' => \DateTime, 'end' => \DateTime]
      *
-     * @param  int $count
+     * @param int $count
+     *
      * @return array
      */
     public function getScheduledTimes($count = 5)
