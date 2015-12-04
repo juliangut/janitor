@@ -10,8 +10,6 @@
 namespace Janitor\Watcher\Scheduled;
 
 use Janitor\Exception\ScheduledException;
-use DateTimeZone;
-use Exception;
 
 trait ScheduledTrait
 {
@@ -31,10 +29,10 @@ trait ScheduledTrait
      */
     public function setTimeZone($timeZone = null)
     {
-        if ($timeZone !== null && !$timeZone instanceof DateTimeZone) {
+        if ($timeZone !== null && !$timeZone instanceof \DateTimeZone) {
             try {
-                $timeZone = new DateTimeZone($timeZone);
-            } catch (Exception $exception) {
+                $timeZone = new \DateTimeZone($timeZone);
+            } catch (\Exception $exception) {
                 throw new ScheduledException($exception->getMessage());
             }
         }
@@ -50,7 +48,7 @@ trait ScheduledTrait
     public function getTimeZone()
     {
         if ($this->timeZone === null) {
-            $this->timeZone = new DateTimeZone(date_default_timezone_get());
+            $this->timeZone = new \DateTimeZone(date_default_timezone_get());
         }
 
         return $this->timeZone;

@@ -9,7 +9,6 @@
 
 namespace Janitor\Excluder;
 
-use InvalidArgumentException;
 use Janitor\Excluder as ExcluderInterface;
 use Janitor\Provider\IP as IPProvider;
 use Janitor\Provider\IP\Basic as BasicIPProvider;
@@ -76,7 +75,7 @@ class IP implements ExcluderInterface
     public function addIP($ipAddress)
     {
         if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-            throw new InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
         }
 
         $this->ips[] = $ipAddress;

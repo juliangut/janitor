@@ -10,9 +10,6 @@
 namespace Janitor\Watcher\Scheduled;
 
 use Janitor\ScheduledWatcher;
-use DateTime;
-use Exception;
-use InvalidArgumentException;
 
 /**
  * Fixed date scheduled maintenance status watcher.
@@ -57,7 +54,7 @@ class Fixed implements ScheduledWatcher
      */
     public function isActive()
     {
-        $now = new DateTime();
+        $now = new \DateTime();
 
         return !($now < $this->start || $this->end < $now);
     }
@@ -84,7 +81,7 @@ class Fixed implements ScheduledWatcher
      */
     public function isScheduled()
     {
-        $now = new DateTime('now', $this->getTimeZone());
+        $now = new \DateTime('now', $this->getTimeZone());
 
         return $this->start && $now < $this->start;
     }
@@ -98,16 +95,16 @@ class Fixed implements ScheduledWatcher
      */
     public function setStart($start)
     {
-        if (!$start instanceof DateTime) {
+        if (!$start instanceof \DateTime) {
             try {
-                $start = new DateTime($start, $this->getTimeZone());
-            } catch (Exception $exception) {
-                throw new InvalidArgumentException(sprintf('"%s" is not a valid DateTime', $start));
+                $start = new \DateTime($start, $this->getTimeZone());
+            } catch (\Exception $exception) {
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid DateTime', $start));
             }
         }
 
         if ($this->end && $start > $this->end) {
-            throw new InvalidArgumentException('Start time should come before end time');
+            throw new \InvalidArgumentException('Start time should come before end time');
         }
 
         $this->start = $start;
@@ -132,16 +129,16 @@ class Fixed implements ScheduledWatcher
      */
     public function setEnd($end)
     {
-        if (!$end instanceof DateTime) {
+        if (!$end instanceof \DateTime) {
             try {
-                $end = new DateTime($end, $this->getTimeZone());
-            } catch (Exception $exception) {
-                throw new InvalidArgumentException(sprintf('"%s" is not a valid DateTime', $end));
+                $end = new \DateTime($end, $this->getTimeZone());
+            } catch (\Exception $exception) {
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid DateTime', $end));
             }
         }
 
         if ($this->start && $end < $this->start) {
-            throw new InvalidArgumentException('End time should come after start time');
+            throw new \InvalidArgumentException('End time should come after start time');
         }
 
         $this->end = $end;

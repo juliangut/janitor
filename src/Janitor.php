@@ -89,7 +89,7 @@ class Janitor
     /**
      * Get currenlty active watcher.
      *
-     * @return \Janitor\Watcher
+     * @return \Janitor\Watcher|null
      */
     public function getActiveWatcher()
     {

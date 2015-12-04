@@ -9,8 +9,6 @@
 
 namespace Janitor\Exception;
 
-use Exception;
-
-class ScheduledException extends Exception
+class ScheduledException extends \Exception
 {
 }
