@@ -9,7 +9,9 @@
 
 namespace Janitor;
 
-use Janitor\Strategy\Render as RenderStrategy;
+use Janitor\Handler\Render as RenderHandler;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Janitor
 {
@@ -28,18 +30,18 @@ class Janitor
     protected $excluders = [];
 
     /**
-     * Resolve strategy.
+     * Resolve handler.
      *
-     * @var \Janitor\Strategy
+     * @var callable
      */
-    protected $strategy;
+    protected $handler;
 
     /**
-     * @param array                  $watchers
-     * @param array                  $excluders
-     * @param \Janitor\Strategy|null $strategy
+     * @param array                 $watchers
+     * @param array                 $excluders
+     * @param \Janitor\Handler|null $handler
      */
-    public function __construct(array $watchers = [], array $excluders = [], Strategy $strategy = null)
+    public function __construct(array $watchers = [], array $excluders = [], callable $handler = null)
     {
         foreach ($watchers as $watcher) {
             $this->addWatcher($watcher);
@@ -49,41 +51,73 @@ class Janitor
             $this->addExcluder($excluder);
         }
 
-        $this->strategy = $strategy;
+        $this->handler = $handler;
     }
 
     /**
-     * Handle maintenance mode.
+     * Add maintenance watcher.
+     *
+     * @param \Janitor\Watcher $watcher
+     */
+    public function addWatcher(Watcher $watcher)
+    {
+        $this->watchers[] = $watcher;
+
+        return $this;
+    }
+
+    /**
+     * Add excluder condition.
+     *
+     * @param \Janitor\Excluder $excluder
+     */
+    public function addExcluder(Excluder $excluder)
+    {
+        $this->excluders[] = $excluder;
+
+        return $this;
+    }
+
+    /**
+     * Set handler.
+     *
+     * @param callable $handler
+     */
+    public function setHandler(callable $handler)
+    {
+        $this->handler = $handler;
+
+        return $this;
+    }
+
+    /**
+     * Retrieve handler.
+     *
+     * @return callable
+     */
+    public function getHandler()
+    {
+        if (!is_callable($this->handler)) {
+            $this->handler = new RenderHandler;
+        }
+
+        return $this->handler;
+    }
+
+    /**
+     * Whether excluding conditions are met.
      *
      * @return bool
      */
-    public function handle()
+    public function isExcluded()
     {
-        if (!$this->isExcluded()) {
-            foreach ($this->watchers as $watcher) {
-                if ($watcher->isActive()) {
-                    if (!$this->strategy instanceof Strategy) {
-                        $this->strategy = new RenderStrategy;
-                    }
-
-                    call_user_func([$this->strategy, 'handle'], $watcher);
-
-                    return true;
-                }
+        foreach ($this->excluders as $excluder) {
+            if ($excluder->isExcluded()) {
+                return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Whether maintenance mode is active.
-     *
-     * @return bool
-     */
-    public function inMaintenance()
-    {
-        return $this->getActiveWatcher() instanceof Watcher;
     }
 
     /**
@@ -103,19 +137,13 @@ class Janitor
     }
 
     /**
-     * Whether excluding conditions are met.
+     * Whether maintenance mode is active.
      *
      * @return bool
      */
-    public function isExcluded()
+    public function inMaintenance()
     {
-        foreach ($this->excluders as $excluder) {
-            if ($excluder->isExcluded()) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->getActiveWatcher() instanceof Watcher;
     }
 
     /**
@@ -152,38 +180,40 @@ class Janitor
     }
 
     /**
-     * Add maintenance watcher.
+     * Handle maintenance mode.
      *
-     * @param \Janitor\Watcher $watcher
+     * @param callable $handler
+     *
+     * @return mixed|null
      */
-    public function addWatcher(Watcher $watcher)
+    public function handle(callable $handler)
     {
-        $this->watchers[] = $watcher;
+        if (!$this->isExcluded()) {
+            $activeWatcher = $this->getActiveWatcher();
 
-        return $this;
+            if ($activeWatcher !== null) {
+                return $handler($watcher);
+            }
+        }
+
+        return null;
     }
 
     /**
-     * Add excluder condition.
+     * Run middleware.
      *
-     * @param \Janitor\Excluder $excluder
-     */
-    public function addExcluder(Excluder $excluder)
-    {
-        $this->excluders[] = $excluder;
-
-        return $this;
-    }
-
-    /**
-     * Set strategy.
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ResponseInterface      $response
+     * @param Janitor\Watcher                          $watcher
      *
-     * @param \Janitor\Strategy $strategy
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function setStrategy(Strategy $strategy)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $this->strategy = $strategy;
+        if (!$this->isExcluded() && $activeWatcher = $this->getActiveWatcher()) {
+            return call_user_func_array($this->getHandler(), [$request, $response, $activeWatcher]);
+        }
 
-        return $this;
+        return $next($request, $response);
     }
 }

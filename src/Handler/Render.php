@@ -7,30 +7,30 @@
  * @license https://github.com/juliangut/janitor/blob/master/LICENSE
  */
 
-namespace Janitor\Strategy;
+namespace Janitor\Handler;
 
-use Janitor\Strategy as StrategyInterface;
+use Janitor\Handler as HandlerInterface;
 use Janitor\Watcher;
 use Janitor\ScheduledWatcher;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Render HTML page maintenance strategy.
+ * Render HTML page maintenance handler.
  */
-class Render implements StrategyInterface
+class Render implements HandlerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function handle(Watcher $watcher)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher)
     {
-        header('Content-Type: text/html; charset=utf-8');
-
         if ($watcher instanceof ScheduledWatcher) {
-            header('Expires: ' . $watcher->getEnd()->format('D, d M Y H:i:s e'));
+            $response->setHeader('Expires', $watcher->getEnd()->format('D, d M Y H:i:s e'));
         } else {
-            header('Cache-Control: max-age=0');
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Pragma: no-cache');
+            $response->setHeader('Cache-Control', 'max-age=0')
+                ->setHeader('Cache-Control', 'no-cache, must-revalidate')
+                ->setHeader('Pragma', 'no-cache');
         }
 
         $message = 'Maintenance mode is not active';
@@ -39,8 +39,6 @@ class Render implements StrategyInterface
             ? 'Undergoing maintenance tasks until ' . $watcher->getEnd()->format('Y/m/d H:i:s')
             : 'Undergoing maintenance tasks';
         }
-
-        http_response_code(503);
 
         $content = <<<EOF
 <html>
@@ -58,6 +56,10 @@ class Render implements StrategyInterface
 </html>
 EOF;
 
-        echo $content;
+        $response->withStatus(503)
+            ->setHeader('Content-Type', 'text/html; charset=utf-8')
+            ->getBody()->write($content);
+
+        return $response;
     }
 }
