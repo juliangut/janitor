@@ -20,7 +20,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->watcher = new Cron('0 0 1 1 *', 'P1M');
+        $this->watcher = new Cron('0 0 1 1 *', 'PT1M');
     }
 
     /**

@@ -13,7 +13,7 @@
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.5",
-    "grunt-climb": "^0.1.0",
+    "grunt-climb": "~0.4.0",
     "grunt-phpcpd": "~0.1.3",
     "grunt-phpcs": "~0.2.3",
     "grunt-phplint": "~0.0.5",

@@ -48,9 +48,13 @@ module.exports = function(grunt) {
     },
     climb: {
       options: {
-        bin: 'vendor/bin/climb'
+        bin: 'vendor/bin/climb',
+        exclude: [
+          'phpunit/phpunit'
+        ]
       },
       application: {
+        directory: './'
       }
     },
     security_checker: {
