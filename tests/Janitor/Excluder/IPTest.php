@@ -26,6 +26,7 @@ class IPTest extends \PHPUnit_Framework_TestCase
      * @covers \Janitor\Excluder\IP::__construct
      * @covers \Janitor\Excluder\IP::addIP
      * @covers \Janitor\Excluder\IP::isExcluded
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testCreation()

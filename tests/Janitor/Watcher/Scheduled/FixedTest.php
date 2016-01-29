@@ -57,6 +57,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
      * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidStartDate()
@@ -70,6 +71,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidStartString()
@@ -80,6 +82,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
      * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidEndDate()
@@ -93,6 +96,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidEndString()

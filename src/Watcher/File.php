@@ -32,14 +32,6 @@ class File implements WatcherInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        return file_exists($this->file) && is_file($this->file);
-    }
-
-    /**
      * Set file path.
      *
      * @param string $file
@@ -59,5 +51,13 @@ class File implements WatcherInterface
     public function getFile()
     {
         return $this->file;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isActive()
+    {
+        return file_exists($this->file) && is_file($this->file);
     }
 }

@@ -9,7 +9,6 @@
 
 namespace Janitor\Watcher\Scheduled;
 
-use Janitor\ScheduledWatcher;
 use Cron\CronExpression;
 
 /**
@@ -28,10 +27,8 @@ use Cron\CronExpression;
  *   |    +----------------------- Hour (0-23)
  *   +---------------------------- Minute (0-59)
  */
-class Cron implements ScheduledWatcher
+class Cron extends AbstractScheduled
 {
-    use ScheduledTrait;
-
     /**
      * Special cron expression shorthands.
      */
@@ -80,97 +77,6 @@ class Cron implements ScheduledWatcher
         $this->setExpression($expression);
         $this->setInterval($interval);
         $this->setTimeZone($timeZone);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        $now = new \DateTime('now', $this->getTimeZone());
-
-        try {
-            $limitDate = $this->expression->getPreviousRunDate($now, 0, true);
-            $limitDate->add($this->interval);
-        } catch (\RuntimeException $exception) {
-            return false;
-        }
-
-        return $now <= $limitDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheduledTimes($count = 5)
-    {
-        try {
-            $now = new \DateTime('now', $this->getTimeZone());
-
-            $runDates = $this->expression->getMultipleRunDates($count, $now);
-        } catch (\RuntimeException $exception) {
-            return [];
-        }
-
-        $interval = $this->interval;
-
-        return array_map(
-            function ($start) use ($interval) {
-                $end = clone $start;
-                $end->add($interval);
-
-                return [
-                    'start' => $start,
-                    'end'   => $end,
-                ];
-            },
-            $runDates
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isScheduled()
-    {
-        try {
-            $now = new \DateTime('now', $this->getTimeZone());
-
-            return $this->expression->getNextRunDate($now) instanceof \DateTime;
-        } catch (\Exception $exception) {
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStart()
-    {
-        if (!$this->isActive()) {
-            return null;
-        }
-
-        $now = new \DateTime('now', $this->getTimeZone());
-
-        return $this->expression->getPreviousRunDate($now, 0, true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEnd()
-    {
-        if (!$this->isActive()) {
-            return null;
-        }
-
-        $now = new \DateTime('now', $this->getTimeZone());
-
-        $end = $this->expression->getPreviousRunDate($now, 0, true);
-        $end->add($this->interval);
-
-        return $end;
     }
 
     /**
@@ -241,5 +147,96 @@ class Cron implements ScheduledWatcher
     public function getInterval()
     {
         return $this->interval;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStart()
+    {
+        if (!$this->isActive()) {
+            return null;
+        }
+
+        $now = new \DateTime('now', $this->getTimeZone());
+
+        return $this->expression->getPreviousRunDate($now, 0, true);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnd()
+    {
+        if (!$this->isActive()) {
+            return null;
+        }
+
+        $now = new \DateTime('now', $this->getTimeZone());
+
+        $end = $this->expression->getPreviousRunDate($now, 0, true);
+        $end->add($this->interval);
+
+        return $end;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScheduledTimes($count = 5)
+    {
+        try {
+            $now = new \DateTime('now', $this->getTimeZone());
+
+            $runDates = $this->expression->getMultipleRunDates($count, $now);
+        } catch (\RuntimeException $exception) {
+            return [];
+        }
+
+        $interval = $this->interval;
+
+        return array_map(
+            function ($start) use ($interval) {
+                $end = clone $start;
+                $end->add($interval);
+
+                return [
+                    'start' => $start,
+                    'end'   => $end,
+                ];
+            },
+            $runDates
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isScheduled()
+    {
+        try {
+            $now = new \DateTime('now', $this->getTimeZone());
+
+            return $this->expression->getNextRunDate($now) instanceof \DateTime;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isActive()
+    {
+        $now = new \DateTime('now', $this->getTimeZone());
+
+        try {
+            $limitDate = $this->expression->getPreviousRunDate($now, 0, true);
+            $limitDate->add($this->interval);
+        } catch (\RuntimeException $exception) {
+            return false;
+        }
+
+        return $now <= $limitDate;
     }
 }

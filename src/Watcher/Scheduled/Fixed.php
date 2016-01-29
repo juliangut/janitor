@@ -9,8 +9,6 @@
 
 namespace Janitor\Watcher\Scheduled;
 
-use Janitor\ScheduledWatcher;
-
 /**
  * Fixed date scheduled maintenance status watcher.
  *
@@ -19,10 +17,8 @@ use Janitor\ScheduledWatcher;
  *   - lower than end if only end is defined
  *   - higher than start and lower than end if both are defined
  */
-class Fixed implements ScheduledWatcher
+class Fixed extends AbstractScheduled
 {
-    use ScheduledTrait;
-
     /**
      * Maintenance start time.
      *
@@ -44,46 +40,9 @@ class Fixed implements ScheduledWatcher
      */
     public function __construct($start, $end, $timeZone = null)
     {
-        $this->setTimeZone($timeZone);
         $this->setStart($start);
         $this->setEnd($end);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        $now = new \DateTime();
-
-        return !($now < $this->start || $this->end < $now);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheduledTimes($count = 5)
-    {
-        if (!$this->isScheduled()) {
-            return [];
-        }
-
-        return [
-            [
-                'start' => $this->start,
-                'end'   => $this->end,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isScheduled()
-    {
-        $now = new \DateTime('now', $this->getTimeZone());
-
-        return $this->start && $now < $this->start;
+        $this->setTimeZone($timeZone);
     }
 
     /**
@@ -152,5 +111,42 @@ class Fixed implements ScheduledWatcher
     public function getEnd()
     {
         return $this->end;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScheduledTimes($count = 5)
+    {
+        if (!$this->isScheduled()) {
+            return [];
+        }
+
+        return [
+            [
+                'start' => $this->start,
+                'end'   => $this->end,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isScheduled()
+    {
+        $now = new \DateTime('now', $this->getTimeZone());
+
+        return $this->start && $now < $this->start;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isActive()
+    {
+        $now = new \DateTime();
+
+        return !($now < $this->start || $this->end < $now);
     }
 }

@@ -41,18 +41,6 @@ class Environment implements WatcherInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        if (getenv($this->var) === false) {
-            return false;
-        }
-
-        return $this->value === null ? true : getenv($this->var) === $this->value;
-    }
-
-    /**
      * Set environment variable name.
      *
      * @param string $var
@@ -94,5 +82,17 @@ class Environment implements WatcherInterface
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isActive()
+    {
+        if (getenv($this->var) === false) {
+            return false;
+        }
+
+        return $this->value === null ? true : getenv($this->var) === $this->value;
     }
 }

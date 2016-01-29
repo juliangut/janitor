@@ -14,7 +14,7 @@ use Janitor\Watcher\Scheduled\Fixed;
 /**
  * @covers \Janitor\Watcher\Scheduled\Fixed
  */
-class ScheduledTraitTest extends \PHPUnit_Framework_TestCase
+class AbstractScheduledTest extends \PHPUnit_Framework_TestCase
 {
     protected $watcher;
 
@@ -24,7 +24,8 @@ class ScheduledTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\ScheduledTrait::setTimeZone
+     * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::setTimeZone
+     *
      * @expectedException \Janitor\Exception\ScheduledException
      */
     public function testBadTimeZone()
@@ -33,8 +34,8 @@ class ScheduledTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\ScheduledTrait::setTimeZone
-     * @covers \Janitor\Watcher\Scheduled\ScheduledTrait::getTimeZone
+     * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::setTimeZone
+     * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::getTimeZone
      */
     public function testTimeZone()
     {

@@ -46,6 +46,18 @@ class Path implements ExcluderInterface
     }
 
     /**
+     * Add path.
+     *
+     * @param string $path
+     */
+    public function addPath($path)
+    {
+        $this->paths[] = '/' . trim($path, '/');
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isExcluded()
@@ -63,17 +75,5 @@ class Path implements ExcluderInterface
         }
 
         return false;
-    }
-
-    /**
-     * Add path.
-     *
-     * @param string $path
-     */
-    public function addPath($path)
-    {
-        $this->paths[] = '/' . trim($path, '/');
-
-        return $this;
     }
 }

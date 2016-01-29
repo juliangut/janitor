@@ -46,6 +46,24 @@ class IP implements ExcluderInterface
     }
 
     /**
+     * Add IP.
+     *
+     * @param string $ipAddress
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function addIP($ipAddress)
+    {
+        if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
+        }
+
+        $this->ips[] = $ipAddress;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isExcluded()
@@ -63,23 +81,5 @@ class IP implements ExcluderInterface
         }
 
         return false;
-    }
-
-    /**
-     * Add IP.
-     *
-     * @param string $ipAddress
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function addIP($ipAddress)
-    {
-        if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
-        }
-
-        $this->ips[] = $ipAddress;
-
-        return $this;
     }
 }

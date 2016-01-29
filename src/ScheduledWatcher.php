@@ -15,20 +15,20 @@ namespace Janitor;
 interface ScheduledWatcher extends Watcher
 {
     /**
-     * Get schedule time span.
+     * Get scheduled time zone.
      *
-     * @param int $count
-     *
-     * @return array
+     * @return \DateTimeZone
      */
-    public function getScheduledTimes($count = 5);
+    public function getTimeZone();
 
     /**
-     * Determines if maintenance mode is scheduled for a future date.
+     * Set scheduled time zone.
      *
-     * @return bool
+     * @param mixed $timeZone
+     *
+     * @throws \Janitor\Exception\ScheduledException
      */
-    public function isScheduled();
+    public function setTimeZone($timeZone = null);
 
     /**
      * Get scheduled start time.
@@ -43,4 +43,20 @@ interface ScheduledWatcher extends Watcher
      * @return \DateTime
      */
     public function getEnd();
+
+    /**
+     * Get schedule time span.
+     *
+     * @param int $count
+     *
+     * @return array
+     */
+    public function getScheduledTimes($count = 5);
+
+    /**
+     * Determines if maintenance mode is scheduled for a future date.
+     *
+     * @return bool
+     */
+    public function isScheduled();
 }

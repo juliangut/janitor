@@ -10,8 +10,9 @@
 namespace Janitor\Watcher\Scheduled;
 
 use Janitor\Exception\ScheduledException;
+use Janitor\ScheduledWatcher;
 
-trait ScheduledTrait
+abstract class AbstractScheduled implements ScheduledWatcher
 {
     /**
      * Scheduled time zone.
@@ -19,6 +20,20 @@ trait ScheduledTrait
      * @var \DateTimeZone
      */
     protected $timeZone;
+
+    /**
+     * Get scheduled time zone.
+     *
+     * @return \DateTimeZone
+     */
+    public function getTimeZone()
+    {
+        if ($this->timeZone === null) {
+            $this->timeZone = new \DateTimeZone(date_default_timezone_get());
+        }
+
+        return $this->timeZone;
+    }
 
     /**
      * Set scheduled time zone.
@@ -38,19 +53,5 @@ trait ScheduledTrait
         }
 
         $this->timeZone = $timeZone;
-    }
-
-    /**
-     * Get scheduled time zone.
-     *
-     * @return \DateTimeZone
-     */
-    public function getTimeZone()
-    {
-        if ($this->timeZone === null) {
-            $this->timeZone = new \DateTimeZone(date_default_timezone_get());
-        }
-
-        return $this->timeZone;
     }
 }

@@ -26,6 +26,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Janitor\Watcher\Scheduled\Cron::setExpression
      * @covers \Janitor\Watcher\Scheduled\Cron::getExpression
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testExpressionMutatorsAccessors()
@@ -41,6 +42,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
      * @covers \Janitor\Watcher\Scheduled\Cron::getEnd
      * @covers \Janitor\Watcher\Scheduled\Cron::setInterval
      * @covers \Janitor\Watcher\Scheduled\Cron::getInterval
+     *
      * @expectedException \InvalidArgumentException
      */
     public function testIntervalMutatorsAccessors()

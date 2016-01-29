@@ -40,7 +40,7 @@ class Basic implements IPInterface
     /**
      * Get IP address by traversing forwarded proxies
      *
-     * @return string|false
+     * @return string|bool
      */
     protected function getIpFromProxy()
     {
