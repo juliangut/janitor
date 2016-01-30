@@ -43,7 +43,12 @@ class Redirect implements HandlerInterface
                 ->withHeader('Pragma', 'no-cache');
         }
 
+        $location = $this->location;
+        if (!preg_match('/^https?:\/\//', $location)) {
+            $location = (string) $request->getUri()->withPath($location);
+        }
+
         return $response->withStatus(302)
-            ->withHeader('Location', $this->location);
+            ->withHeader('Location', $location);
     }
 }

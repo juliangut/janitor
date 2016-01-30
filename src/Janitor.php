@@ -10,8 +10,8 @@
 namespace Janitor;
 
 use Janitor\Handler\Render as RenderHandler;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Janitor
 {

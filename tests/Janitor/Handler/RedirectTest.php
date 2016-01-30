@@ -22,7 +22,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
      * @covers \Janitor\Handler\Redirect::__construct
      * @covers \Janitor\Handler\Redirect::__invoke
      */
-    public function testRendering()
+    public function testAbsouteRedirection()
     {
         $watcher = $this->getMock('Janitor\\Watcher');
         $handler = new Redirect('http://example.com');
@@ -39,7 +39,27 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
      * @covers \Janitor\Handler\Redirect::__construct
      * @covers \Janitor\Handler\Redirect::__invoke
      */
-    public function testRenderingScheduled()
+    public function testRelativeRedirection()
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $request = $request->withUri($request->getUri()->withHost('mydomain.com'));
+
+        $watcher = $this->getMock('Janitor\\Watcher');
+        $handler = new Redirect('/maintenance');
+
+        $response = $handler($request, new Response('php://temp'), $watcher);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://mydomain.com/maintenance', $response->getHeaderLine('Location'));
+        $this->assertEquals('no-cache', $response->getHeaderLine('Pragma'));
+        $this->assertTrue($response->hasHeader('Cache-Control'));
+    }
+
+    /**
+     * @covers \Janitor\Handler\Redirect::__construct
+     * @covers \Janitor\Handler\Redirect::__invoke
+     */
+    public function testRedirectScheduled()
     {
         $watcher = $this->getMock('Janitor\\ScheduledWatcher');
         $watcher->expects($this->once())->method('getEnd')->will($this->returnValue(new \DateTime));
