@@ -12,7 +12,7 @@ namespace Janitor\Test\Watcher\Scheduled;
 use Janitor\Watcher\Scheduled\Cron;
 
 /**
- * @covers Janitor\Watcher\Scheduled\Cron
+ * @covers \Janitor\Watcher\Scheduled\Cron
  */
 class CronTest extends \PHPUnit_Framework_TestCase
 {

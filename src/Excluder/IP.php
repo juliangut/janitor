@@ -10,8 +10,7 @@
 namespace Janitor\Excluder;
 
 use Janitor\Excluder as ExcluderInterface;
-use Janitor\Provider\IP as IPProvider;
-use Janitor\Provider\IP\Basic as BasicIPProvider;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Maintenance excluder by route
@@ -26,23 +25,23 @@ class IP implements ExcluderInterface
     protected $ips = [];
 
     /**
-     * IP provider.
+     * Allowe proxies.
      *
-     * @var \Janitor\Provider\IP
+     * @var array
      */
-    protected $provider;
+    protected $trustedProxies;
 
     /**
-     * @param array                     $ips
-     * @param \Janitor\Provider\IP|null $provider
+     * @param array $ips
+     * @param array $trustedProxies
      */
-    public function __construct(array $ips = [], IPProvider $provider = null)
+    public function __construct(array $ips = [], array $trustedProxies = [])
     {
         foreach ($ips as $ipAddress) {
             $this->addIP($ipAddress);
         }
 
-        $this->provider = $provider;
+        $this->trustedProxies = $trustedProxies;
     }
 
     /**
@@ -54,7 +53,7 @@ class IP implements ExcluderInterface
      */
     public function addIP($ipAddress)
     {
-        if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
+        if (!$this->isValidIp($ipAddress)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
         }
 
@@ -66,20 +65,65 @@ class IP implements ExcluderInterface
     /**
      * {@inheritdoc}
      */
-    public function isExcluded()
+    public function isExcluded(ServerRequestInterface $request)
     {
-        if (!$this->provider instanceof IPProvider) {
-            $this->provider = new BasicIPProvider();
-        }
+        $currentIP = $this->determineCurrentIp($request);
 
-        $currentIP = $this->provider->getIPAddress();
-
-        foreach ($this->ips as $ip) {
-            if ($ip === $currentIP) {
+        foreach ($this->ips as $ipAddress) {
+            if ($ipAddress === $currentIP) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Find client's IP.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string
+     */
+    protected function determineCurrentIp($request)
+    {
+        $inspectionHeaders = [
+            'X-Forwarded-For',
+            'X-Forwarded',
+            'X-Cluster-Client-Ip',
+            'Client-Ip',
+        ];
+
+        $currentIp = null;
+        $serverParams = $request->getServerParams();
+        if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIp($serverParams['REMOTE_ADDR'])) {
+            $currentIp = $serverParams['REMOTE_ADDR'];
+        }
+
+        if (empty($this->trustedProxies) || in_array($currentIp, $this->trustedProxies)) {
+            foreach ($inspectionHeaders as $header) {
+                if ($request->hasHeader($header)) {
+                    $ipAddress = trim(current(explode(',', $request->getHeaderLine($header))));
+                    if ($this->isValidIp($ipAddress)) {
+                        $currentIp = $ipAddress;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $currentIp;
+    }
+
+    /**
+     * Check IP validity.
+     *
+     * @param string $ipAddress
+     *
+     * @return bool
+     */
+    private function isValidIp($ipAddress)
+    {
+        return filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) !== false;
     }
 }

@@ -10,9 +10,10 @@
 namespace Janitor\Test\Excluder;
 
 use Janitor\Excluder\IP;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * @covers Janitor\Excluder\IP
+ * @covers \Janitor\Excluder\IP
  */
 class IPTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,7 @@ class IPTest extends \PHPUnit_Framework_TestCase
     public function testCreation()
     {
         $excluder = new IP();
-        $this->assertFalse($excluder->isExcluded());
+        $this->assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
 
         new IP(['invalidIP']);
     }
@@ -44,12 +45,11 @@ class IPTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsExcluded()
     {
-        $ipProvider = $this->getMock('Janitor\\Provider\\IP\\Basic');
-        $ipProvider->expects($this->once())->method('getIpAddress')->will($this->returnValue('98.139.183.24'));
+        $request = ServerRequestFactory::fromGlobals();
+        $request = $request->withHeader('Client-Ip', '74.125.230.5');
+        $excluder = new IP($this->excludedIPs);
 
-        $excluder = new IP($this->excludedIPs, $ipProvider);
-
-        $this->assertTrue($excluder->isExcluded());
+        $this->assertTrue($excluder->isExcluded($request));
     }
 
     /**
@@ -57,11 +57,10 @@ class IPTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotExcluded()
     {
-        $ipProvider = $this->getMock('Janitor\\Provider\\IP\\Basic');
-        $ipProvider->expects($this->once())->method('getIpAddress')->will($this->returnValue('127.0.0.1'));
+        $request = ServerRequestFactory::fromGlobals(['REMOTE_ADDR' => '10.10.10.10']);
+        $request = $request->withHeader('X-Forwarded', '80.80.80.80');
+        $excluder = new IP($this->excludedIPs, ['10.10.10.10']);
 
-        $excluder = new IP($this->excludedIPs, $ipProvider);
-
-        $this->assertFalse($excluder->isExcluded());
+        $this->assertFalse($excluder->isExcluded($request));
     }
 }

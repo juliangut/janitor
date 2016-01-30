@@ -16,14 +16,14 @@ use Psr\Http\Message\ResponseInterface;
 class Janitor
 {
     /**
-     * List of maintenance watchers.
+     * List of watchers.
      *
      * @var array
      */
     protected $watchers = [];
 
     /**
-     * List of excluders conditions.
+     * List of excluders.
      *
      * @var array
      */
@@ -37,12 +37,24 @@ class Janitor
     protected $handler;
 
     /**
+     * Request attribute name to store currently active watcher.
+     *
+     * @var \Janitor\Watcher
+     */
+    protected $attributeName;
+
+    /**
      * @param array                 $watchers
      * @param array                 $excluders
      * @param \Janitor\Handler|null $handler
+     * @param string                $requestAttribute
      */
-    public function __construct(array $watchers = [], array $excluders = [], callable $handler = null)
-    {
+    public function __construct(
+        array $watchers = [],
+        array $excluders = [],
+        callable $handler = null,
+        $attributeName = 'active_watcher'
+    ) {
         foreach ($watchers as $watcher) {
             $this->addWatcher($watcher);
         }
@@ -52,6 +64,7 @@ class Janitor
         }
 
         $this->handler = $handler;
+        $this->attributeName = $attributeName;
     }
 
     /**
@@ -91,59 +104,15 @@ class Janitor
     }
 
     /**
-     * Retrieve handler.
+     * Set request attribute name to store active watcher.
      *
-     * @return callable
+     * @param string $attributeName
      */
-    public function getHandler()
+    public function setAttributeName($attributeName)
     {
-        if (!is_callable($this->handler)) {
-            $this->handler = new RenderHandler;
-        }
+        $this->attributeName = $attributeName;
 
-        return $this->handler;
-    }
-
-    /**
-     * Whether excluding conditions are met.
-     *
-     * @return bool
-     */
-    public function isExcluded()
-    {
-        foreach ($this->excluders as $excluder) {
-            if ($excluder->isExcluded()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get currenlty active watcher.
-     *
-     * @return \Janitor\Watcher|null
-     */
-    public function getActiveWatcher()
-    {
-        foreach ($this->watchers as $watcher) {
-            if ($watcher->isActive()) {
-                return $watcher;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether maintenance mode is active.
-     *
-     * @return bool
-     */
-    public function inMaintenance()
-    {
-        return $this->getActiveWatcher() instanceof Watcher;
+        return $this;
     }
 
     /**
@@ -180,19 +149,39 @@ class Janitor
     }
 
     /**
-     * Handle maintenance mode.
+     * Run middleware.
      *
-     * @param callable $handler
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ResponseInterface      $response
+     * @param \Janitor\Watcher                          $watcher
      *
-     * @return mixed|null
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function handle(callable $handler)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$this->isExcluded()) {
-            $activeWatcher = $this->getActiveWatcher();
+        $activeWatcher = $this->getActiveWatcher();
 
-            if ($activeWatcher !== null) {
-                return $handler($watcher);
+        if ($activeWatcher instanceof Watcher) {
+            if (!$this->isExcluded($request)) {
+                return call_user_func_array($this->getHandler(), [$request, $response, $activeWatcher]);
+            }
+
+            $request = $request->withAttribute($this->attributeName, $activeWatcher);
+        }
+
+        return $next($request, $response);
+    }
+
+    /**
+     * Get currenlty active watcher.
+     *
+     * @return \Janitor\Watcher|null
+     */
+    protected function getActiveWatcher()
+    {
+        foreach ($this->watchers as $watcher) {
+            if ($watcher->isActive()) {
+                return $watcher;
             }
         }
 
@@ -200,20 +189,34 @@ class Janitor
     }
 
     /**
-     * Run middleware.
+     * Whether excluding conditions are met.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param Janitor\Watcher                          $watcher
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return bool
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    protected function isExcluded(ServerRequestInterface $request)
     {
-        if (!$this->isExcluded() && $activeWatcher = $this->getActiveWatcher()) {
-            return call_user_func_array($this->getHandler(), [$request, $response, $activeWatcher]);
+        foreach ($this->excluders as $excluder) {
+            if ($excluder->isExcluded($request)) {
+                return true;
+            }
         }
 
-        return $next($request, $response);
+        return false;
+    }
+
+    /**
+     * Retrieve handler.
+     *
+     * @return callable
+     */
+    protected function getHandler()
+    {
+        if (!is_callable($this->handler)) {
+            $this->handler = new RenderHandler;
+        }
+
+        return $this->handler;
     }
 }

@@ -10,8 +10,7 @@
 namespace Janitor\Excluder;
 
 use Janitor\Excluder as ExcluderInterface;
-use Janitor\Provider\Path as PathProvider;
-use Janitor\Provider\Path\Basic as BasicPathProvider;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Maintenance excluder by path
@@ -26,23 +25,13 @@ class Path implements ExcluderInterface
     protected $paths = [];
 
     /**
-     * Path provider.
-     *
-     * @var \Janitor\Provider\Path
+     * @param array $paths
      */
-    protected $provider;
-
-    /**
-     * @param array                       $paths
-     * @param \Janitor\Provider\Path|null $provider
-     */
-    public function __construct(array $paths = [], PathProvider $provider = null)
+    public function __construct(array $paths = [])
     {
         foreach ($paths as $path) {
             $this->addPath($path);
         }
-
-        $this->provider = $provider;
     }
 
     /**
@@ -52,7 +41,7 @@ class Path implements ExcluderInterface
      */
     public function addPath($path)
     {
-        $this->paths[] = '/' . trim($path, '/');
+        $this->paths[] = trim($path, '/');
 
         return $this;
     }
@@ -60,13 +49,9 @@ class Path implements ExcluderInterface
     /**
      * {@inheritdoc}
      */
-    public function isExcluded()
+    public function isExcluded(ServerRequestInterface $request)
     {
-        if (!$this->provider instanceof PathProvider) {
-            $this->provider = new BasicPathProvider();
-        }
-
-        $currentPath = '/' . trim($this->provider->getPath(), '/');
+        $currentPath = trim($request->getUri()->getPath(), '/');
 
         foreach ($this->paths as $path) {
             if ($path === $currentPath) {

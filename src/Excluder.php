@@ -9,12 +9,16 @@
 
 namespace Janitor;
 
+use Psr\Http\Message\ServerRequestInterface;
+
 interface Excluder
 {
     /**
      * Determines if is excluded from maintenance mode.
      *
+     * @param |Psr\Http\Message\ServerRequestInterface $request
+     *
      * @return bool
      */
-    public function isExcluded();
+    public function isExcluded(ServerRequestInterface $request);
 }

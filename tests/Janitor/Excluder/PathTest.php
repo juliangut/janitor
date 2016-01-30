@@ -10,9 +10,10 @@
 namespace Janitor\Test\Excluder;
 
 use Janitor\Excluder\Path;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * @covers Janitor\Excluder\Path
+ * @covers \Janitor\Excluder\Path
  */
 class PathTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,12 +29,10 @@ class PathTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsExcluded()
     {
-        $pathProvider = $this->getMock('Janitor\\Provider\\Path\\Basic');
-        $pathProvider->expects($this->once())->method('getPath')->will($this->returnValue('/user'));
+        $request = ServerRequestFactory::fromGlobals();
+        $excluder = new Path($this->excludedPaths);
 
-        $excluder = new Path($this->excludedPaths, $pathProvider);
-
-        $this->assertTrue($excluder->isExcluded());
+        $this->assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/user'))));
     }
 
     /**
@@ -41,11 +40,9 @@ class PathTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotExcluded()
     {
-        $pathProvider = $this->getMock('Janitor\\Provider\\Path\\Basic');
-        $pathProvider->expects($this->once())->method('getPath')->will($this->returnValue('/home'));
+        $request = ServerRequestFactory::fromGlobals();
+        $excluder = new Path($this->excludedPaths);
 
-        $excluder = new Path($this->excludedPaths, $pathProvider);
-
-        $this->assertFalse($excluder->isExcluded());
+        $this->assertFalse($excluder->isExcluded($request->withUri($request->getUri()->withPath('/home'))));
     }
 }

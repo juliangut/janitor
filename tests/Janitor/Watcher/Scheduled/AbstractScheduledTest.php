@@ -26,7 +26,7 @@ class AbstractScheduledTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::setTimeZone
      *
-     * @expectedException \Janitor\Exception\ScheduledException
+     * @expectedException \InvalidArgumentException
      */
     public function testBadTimeZone()
     {

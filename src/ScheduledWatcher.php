@@ -26,7 +26,7 @@ interface ScheduledWatcher extends Watcher
      *
      * @param mixed $timeZone
      *
-     * @throws \Janitor\Exception\ScheduledException
+     * @throws \InvalidArgumentException
      */
     public function setTimeZone($timeZone = null);
 

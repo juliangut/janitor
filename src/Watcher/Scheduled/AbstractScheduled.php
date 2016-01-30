@@ -9,7 +9,6 @@
 
 namespace Janitor\Watcher\Scheduled;
 
-use Janitor\Exception\ScheduledException;
 use Janitor\ScheduledWatcher;
 
 abstract class AbstractScheduled implements ScheduledWatcher
@@ -22,9 +21,7 @@ abstract class AbstractScheduled implements ScheduledWatcher
     protected $timeZone;
 
     /**
-     * Get scheduled time zone.
-     *
-     * @return \DateTimeZone
+     * {@inheritdoc}
      */
     public function getTimeZone()
     {
@@ -36,11 +33,7 @@ abstract class AbstractScheduled implements ScheduledWatcher
     }
 
     /**
-     * Set scheduled time zone.
-     *
-     * @param mixed $timeZone
-     *
-     * @throws \Janitor\Exception\ScheduledException
+     * {@inheritdoc}
      */
     public function setTimeZone($timeZone = null)
     {
@@ -48,7 +41,7 @@ abstract class AbstractScheduled implements ScheduledWatcher
             try {
                 $timeZone = new \DateTimeZone($timeZone);
             } catch (\Exception $exception) {
-                throw new ScheduledException($exception->getMessage());
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
             }
         }
 
