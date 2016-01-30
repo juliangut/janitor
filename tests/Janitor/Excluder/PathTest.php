@@ -19,7 +19,7 @@ class PathTest extends \PHPUnit_Framework_TestCase
 {
     protected $excludedPaths = [
         '/user',
-        '/blog/post',
+        '/^\/blog\/.+/'
     ];
 
     /**
@@ -27,12 +27,25 @@ class PathTest extends \PHPUnit_Framework_TestCase
      * @covers \Janitor\Excluder\Path::addPath
      * @covers \Janitor\Excluder\Path::isExcluded
      */
-    public function testIsExcluded()
+    public function testIsExcludedByString()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Path($this->excludedPaths);
 
         $this->assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/user'))));
+    }
+
+    /**
+     * @covers \Janitor\Excluder\Path::__construct
+     * @covers \Janitor\Excluder\Path::addPath
+     * @covers \Janitor\Excluder\Path::isExcluded
+     */
+    public function testIsExcludedByRegex()
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $excluder = new Path($this->excludedPaths);
+
+        $this->assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/blog/post'))));
     }
 
     /**

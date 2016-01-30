@@ -41,7 +41,7 @@ class Path implements ExcluderInterface
      */
     public function addPath($path)
     {
-        $this->paths[] = trim($path, '/');
+        $this->paths[] = trim($path);
 
         return $this;
     }
@@ -51,10 +51,10 @@ class Path implements ExcluderInterface
      */
     public function isExcluded(ServerRequestInterface $request)
     {
-        $currentPath = trim($request->getUri()->getPath(), '/');
+        $currentPath = $request->getUri()->getPath();
 
         foreach ($this->paths as $path) {
-            if ($path === $currentPath) {
+            if ($path === $currentPath || @preg_match($path, $currentPath) === 1) {
                 return true;
             }
         }
