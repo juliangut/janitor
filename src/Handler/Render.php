@@ -38,6 +38,8 @@ class Render implements HandlerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher)
     {
+        $content = '';
+
         $contentType = $this->determineContentType($request);
         switch ($contentType) {
             case 'application/json':

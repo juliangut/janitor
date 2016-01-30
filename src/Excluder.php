@@ -16,7 +16,7 @@ interface Excluder
     /**
      * Determines if is excluded from maintenance mode.
      *
-     * @param |Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ServerRequestInterface $request
      *
      * @return bool
      */

@@ -39,15 +39,15 @@ class Janitor
     /**
      * Request attribute name to store currently active watcher.
      *
-     * @var \Janitor\Watcher
+     * @var string
      */
     protected $attributeName;
 
     /**
-     * @param array                 $watchers
-     * @param array                 $excluders
-     * @param \Janitor\Handler|null $handler
-     * @param string                $requestAttribute
+     * @param array         $watchers
+     * @param array         $excluders
+     * @param callable|null $handler
+     * @param string        $attributeName
      */
     public function __construct(
         array $watchers = [],
@@ -153,7 +153,7 @@ class Janitor
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param \Janitor\Watcher                         $watcher
+     * @param callable                                 $next
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
