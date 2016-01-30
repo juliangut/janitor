@@ -146,6 +146,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Janitor\Janitor::addWatcher
      * @covers \Janitor\Janitor::addExcluder
+     * @covers \Janitor\Janitor::setAttributeName
      * @covers \Janitor\Janitor::__invoke
      * @covers \Janitor\Janitor::getActiveWatcher
      * @covers \Janitor\Janitor::isExcluded
@@ -162,13 +163,19 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
         $excluder->expects($this->once())->method('isExcluded')->will($this->returnValue(true));
         $this->janitor->addExcluder($excluder);
 
+        $customAttributeName = 'custom';
+        $this->janitor->setAttributeName($customAttributeName);
+
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),
-            function ($request, $response) {
-                return $response->withHeader('active_watcher', get_class($request->getAttribute('active_watcher')));
+            function ($request, $response) use ($customAttributeName) {
+                return $response->withHeader(
+                    $customAttributeName,
+                    get_class($request->getAttribute($customAttributeName))
+                );
             }
         );
-        $this->assertEquals(get_class($watcher), $response->getHeaderLine('active_watcher'));
+        $this->assertEquals(get_class($watcher), $response->getHeaderLine($customAttributeName));
     }
 }
