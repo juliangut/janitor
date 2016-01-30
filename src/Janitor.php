@@ -153,7 +153,7 @@ class Janitor
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param \Janitor\Watcher                          $watcher
+     * @param \Janitor\Watcher                         $watcher
      *
      * @return \Psr\Http\Message\ResponseInterface
      */

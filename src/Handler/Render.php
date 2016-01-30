@@ -151,6 +151,7 @@ class Render implements HandlerInterface
         if (count($selectedContentTypes)) {
             return $selectedContentTypes[0];
         }
+
         return 'text/html';
     }
 }
