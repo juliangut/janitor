@@ -19,7 +19,7 @@ class PathTest extends \PHPUnit_Framework_TestCase
 {
     protected $excludedPaths = [
         '/user',
-        '/^\/blog\/.+/'
+        '/^\/blog\/.+/',
     ];
 
     /**
