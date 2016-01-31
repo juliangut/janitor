@@ -116,6 +116,16 @@ class Janitor
     }
 
     /**
+     * Retrieve request attribute name storing active watcher.
+     *
+     * @return string
+     */
+    public function getAttributeName()
+    {
+        return $this->attributeName;
+    }
+
+    /**
      * Get next scheduled time spans.
      *
      * Returns an array of ['start' => \DateTime, 'end' => \DateTime]
@@ -166,7 +176,7 @@ class Janitor
                 return call_user_func_array($this->getHandler(), [$request, $response, $activeWatcher]);
             }
 
-            $request = $request->withAttribute($this->attributeName, $activeWatcher);
+            $request = $request->withAttribute($this->getAttributeName(), $activeWatcher);
         }
 
         return $next($request, $response);

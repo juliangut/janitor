@@ -147,6 +147,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
      * @covers \Janitor\Janitor::addWatcher
      * @covers \Janitor\Janitor::addExcluder
      * @covers \Janitor\Janitor::setAttributeName
+     * @covers \Janitor\Janitor::getAttributeName
      * @covers \Janitor\Janitor::__invoke
      * @covers \Janitor\Janitor::getActiveWatcher
      * @covers \Janitor\Janitor::isExcluded
@@ -165,6 +166,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
 
         $customAttributeName = 'custom';
         $this->janitor->setAttributeName($customAttributeName);
+        $this->assertEquals($customAttributeName, $this->janitor->getAttributeName());
 
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
