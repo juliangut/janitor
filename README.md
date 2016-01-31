@@ -137,6 +137,8 @@ Excluders set conditions to bypass maintenance mode in order to allow certain pe
 
 * `IP` Verifies user's IP to allow access.
 * `Path` Excludes certain URL paths from maintenance.
+* `BasicAuth` Excludes based on request Authorization header.
+* `Header` Excludes based on request Header value.
 
 ```php
 $ipExcluder = new \Janitor\Excluder\IP('127.0.0.1');
@@ -147,9 +149,21 @@ $pathExcluder = new \Janitor\Excluder\Path('/maintenance');
 // Users accessing 'http://yourdomain.com/maintenance' are excluded
 $pathExcluder->isExcluded($request);
 
-$pathExcluder = new \Janitor\Excluder\Path('/^\/admin/');
+$pathExcluderRegex = new \Janitor\Excluder\Path('/^\/admin/');
 // Can also be a regex
-$pathExcluder->isExcluded($request);
+$pathExcluderRegex->isExcluded($request);
+
+$basicAuthExcluder = new \Janitor\Excluder\BasicAuth(['root' => 'secret']);
+// Users accessing with basic authorization 'root' user are excluded
+$basicAuthExcluder->isExcluded($request);
+
+$headerExcluder = new \Janitor\Excluder\Header('X-Custom-Header', 'custom');
+// Users accessing with 'X-Custom-Header' header's value 'custom' are excluded
+$headerExcluder->isExcluded($request);
+
+$headerExcluderRegex = new \Janitor\Excluder\Header('X-Custom-Header', '/^custom/');
+// Again a regex can be used
+$headerExcluderRegex->isExcluded($request);
 ```
 
 > When adding excluders consider they are checked in the same order they are included so that when an excluder condition is met the rest of the excluders won't be tested. Add more general excluders first and then more focused ones.
