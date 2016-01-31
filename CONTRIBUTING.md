@@ -16,5 +16,6 @@ Find here a few rules to follow in order to keep the code clean and easy to revi
 [Grunt](http://gruntjs.com/) tasks are provided to help you keep code quality and run the test suite
 
 - `grunt check` will run PHP linting, [PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) for style guidelines, [PHPMD](https://github.com/phpmd/phpmd) for code smells and [PHPCPD](https://github.com/sebastianbergmann/phpcpd) for copy/paste detection
+- `grunt security` will run [Climb](https://github.com/vinkla/climb) to verify Composer dependencies and [Security Checker](https://github.com/sensiolabs/security-checker) to check dependencies known vulnerabilities
 - `grunt test` will run [PHPUnit](https://github.com/sebastianbergmann/phpunit) for unit tests
-- `grunt` will run previous commands at once
+- `grunt` will run all previous commands at once

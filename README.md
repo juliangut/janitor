@@ -11,15 +11,24 @@
 
 Effortless maintenance management.
 
+Janitor is a ready to use PSR7 middleware that provides you with an easy configurable and extensible way to handle maintenance mode on your project, because maintenance handling goes beyond responding to the user with an HTTP 503 code and a simple message.
+
+Set several conditions that will be checked to determine if the maintenance handler should be triggered. This conditions are of two kinds, 'activation' conditions (name `watchers`) and conditions to bypass the normal execution (named `excluders`). Default watchers and excluders allows you to cover a wide range of situations so you can drop Janitor in and start in no time, but if needed it's very easy to create your own conditions.
+
+Once Janitor has determine maintenance mode is active it let you use your handler to get a response ready for the user or you can let Janitor handle it all by itself (a nicely formatted 503 response).
+
+> Learn more in [Janitor's page](http://juliangut.com/janitor)
+
 ## Installation
 
 Best way to install is using Composer:
 
 ```
-php composer.phar require juliangut/janitor
+// Assuming composer is installed globally
+composer require juliangut/janitor
 ```
 
-Then require_once the autoload file:
+Then require the autoload file:
 
 ```php
 require_once './vendor/autoload.php';
@@ -27,14 +36,17 @@ require_once './vendor/autoload.php';
 
 ## Usage
 
-Provide conditions for maintenance activation (with _watchers_) and conditions to bypass maintenance mode (with _excluders_)
-
 ```php
-use Janitor\Watcher\File as FileWatcher;
-use Janitor\Watcher\Cron as CronWatcher;
 use Janitor\Excluder\IP as IPExcluder;
 use Janitor\Excluder\Path as PathExcluder;
 use Janitor\Janitor;
+use Janitor\Watcher;
+use Janitor\Watcher\File as FileWatcher;
+use Janitor\Watcher\Scheduled\Cron as CronWatcher;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
 $watchers = [
     new FileWatcher('/tmp/maintenance'),
@@ -42,39 +54,40 @@ $watchers = [
 ];
 $excluders = [
     new IPExcluder('127.0.0.1'),
-    new PathExcluder(['/maintenance', '/admin']),
+    new PathExcluder(['/maintenance', '/^\/admin/']),
 ];
 
-$janitor = new Janitor($watchers, $excluders);
+$handler = function (ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher) {
+    $response->getBody()->write('I am in maintenance mode!');
 
-if ($janitor->inMaintenance() && !$janitor->isExcluded()) {
-    $activeWatcher = $janitor->getActiveWatcher();
-
-    // Handle maintenance mode
+    return $response;
 }
+
+$activeWatcherAttributeName = 'maintenance_watcher'; // Default is 'active_watcher'
+$janitor = new Janitor($watchers, $excluders, $handler, $activeWatcherAttributeName);
+
+$response = $janitor(
+    ServerRequestFactory::fromGlobals(),
+    new Response('php://temp'),
+    function ($request, $response) use ($activeHandlerAttributeName) {
+        $activeHandler = $request->getAttribute($activeHandlerAttributeName);
+        // ...
+    }
+);
 ```
 
-Or allow Janitor to take care of maintenance mode according to the selected `Strategy`, if no strategy is provided `Render` strategy will be used outputing basic headers and mainenance HTML page.
-
-```php
-$janitor = new Janitor($watchers, $excluders);
-
-if ($janitor->handle()) {
-    die; // Headers and content already sent
-}
-```
+> In case a watcher is active at any given point (and so maintenance mode does) it will be attached as an attribute to the request object so it can be retrieved during execution.
 
 ## Watchers
 
 Watchers serve different means to activate maintenance mode by verifying conditions to be met.
 
 * `Manual` Just set it to be active. Useful to be used with a configuration parameter.
-* `File` Checks the existance of the provided file in the system.
-* `Environment` Checks if an environment variable has a predefined value.
+* `File` Checks the existance of the provided file.
+* `Environment` Checks if an environment variable is set to a value.
 
 ```php
-$inMaintenance = true;
-$manualWatcher = new \Janitor\Watcher\Manual($inMaintenance);
+$manualWatcher = new \Janitor\Watcher\Manual(true);
 // Always active
 $manualWatcher->isActive();
 
@@ -87,28 +100,36 @@ $envWatcher = new \Janitor\Watcher\Environment('maintenance', 'ON');
 $envWatcher->isActive();
 ```
 
-Watchers are checked in the order they are added, once a watcher is active the rest won't be tested against.
-
 ### Scheduled whatchers
 
 Scheduled watchers are a special type of watchers that identify a point in time in the future for a maintenance period.
 
-* `Fixed` Hard set start and end times for a scheduled maintenance period.
+* `Fixed` Hard set start and/or end times for a scheduled maintenance period.
 * `Cron` Set periodic maintenance periods using [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression) syntax.
 
 ```php
-$fixedWatcher = new \Janitor\Watcher\Fixed('2016/01/01 00:00:00', '2016/01/01 01:00:00');
-// Active only 1st Januarry 2016 for 1 hour
+$fixedWatcher = new \Janitor\Watcher\Scheduled\Fixed('2026/01/01 00:00:00', '2026/01/01 01:00:00');
+// Active only 1st January 2026 for exactly 1 hour
 $fixedWatcher->isActive();
 
-$cronWatcher = new \Janitor\Watcher\Cron('0 0 1 * *', new \DateInterval('PT2H'));
+$cronWatcher = new \Janitor\Watcher\Scheduled\Cron('0 0 1 * *', new \DateInterval('PT2H'));
 // Active the first day of each month at midnight during 2 hours
 $cronWatcher->isActive();
 ```
 
-_If you perform maintenance tasks periodically (maybe on the same date every week) you may want to use either `Cron` watcher to identify the date and the time period needed, or `File` watcher to watch for a file in your system and set your maintenance process to `touch` and `rm` that file as part of the maintenance process._
+From a scheduled watcher you can get a list of upcoming maintenance periods
 
-_Cron provider uses Michael Dowling [cron-expression](https://github.com/mtdowling/cron-expression) package._
+```php
+$cronWatcher = new \Janitor\Watcher\Scheduled\Cron('0 0 1 * *', new \DateInterval('PT2H'));
+// Array of ['start' => \DateTime, 'end' => \DateTime] of next maintenance periods
+$scheduledPeriods = $cronWatcher->getScheduledTimes(10);
+```
+
+> Watchers are checked in the order they are added, once a watcher is active the rest won't be checked.
+
+_If you perform maintenance tasks periodically (maybe on the same day of every week) you may want to use either `Cron` watcher to identify the date and the time period needed, or `File` watcher to watch for a file in your system and set your maintenance process to `touch` and `rm` that file as part of the maintenance process._
+
+_Cron watcher uses Michael Dowling's [cron-expression](https://github.com/mtdowling/cron-expression)._
 
 ## Excluders
 
@@ -120,116 +141,129 @@ Excluders set conditions to bypass maintenance mode in order to allow certain pe
 ```php
 $ipExcluder = new \Janitor\Excluder\IP('127.0.0.1');
 // Users accessing from IP 127.0.0.1 are excluded
-$ipExcluder->isExcluded();
+$ipExcluder->isExcluded($request);
 
-$pathExcluder = new \Janitor\Excluder\Path('/admin');
-// Users accessing http://yourdomain.com/admin are excluded
-$pathExcluder->isExcluded();
+$pathExcluder = new \Janitor\Excluder\Path('/maintenance');
+// Users accessing 'http://yourdomain.com/maintenance' are excluded
+$pathExcluder->isExcluded($request);
+
+$pathExcluder = new \Janitor\Excluder\Path('/^\/admin/');
+// Can also be a regex
+$pathExcluder->isExcluded($request);
 ```
 
-When adding excluders consider they are checked in the same order they are included so that when an excluder condition is met the rest of the excluders won't be tested. Add more general excluders first and then more focused ones.
+> When adding excluders consider they are checked in the same order they are included so that when an excluder condition is met the rest of the excluders won't be tested. Add more general excluders first and then more focused ones.
 
-_Tipically you'll want to exclude your team's IPs and maintenance and administration pages._
+_Tipically you'll want to exclude your team's IPs and certain pages such as maintenance or administration zone._
 
-### Excluder providers
+## Handlers
 
-Excluders extract information from providers to test if the condition is met. Two providers are included, one to identify user's IP and one to determine current URL path.
-
-Default excluder providers are very simple, but you can use your own (on excluder creation) if you consider it appropriate by implementing `Janitor\Provider\IP` and `Janitor\Provider\Path` respectively.
-
-## Strategies
-
-Two strategies are suplied by default to handle maintenance mode if Janitor is allowed to do so.
-
-* `Render` Will output HTTP headers and a basic formatted HTML maintenance page.
-* `Redirect` Browser will get redirected to a configured URL (tipically maintenance page).
-
-`Render` strategy is the default used if none provided and Janitor handles maintenance mode. It's very simple and most probably you would want to replace it by your own maintenance page. You can do it by implementing `Janitor\Strategy`.
+In order to handle maintenance mode any callable can be provided to `setHandler` method given it follows this signature:
 
 ```php
-$janitor->setStrategy(new YourAwesomeStrategy);
+function (\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, \Janitor\Watcher $watcher);
 ```
 
-## Integration
+Two really basic handlers are suplied by default to cope with maintenance mode.
+
+* `Render` Sets response with 503 code and add basic formatted maintenance output based on request's Accept header.
+* `Redirect` Prepares response to be a 302 redirection to a configured URL (tipically maintenance page).
+
+Of the two `Render` will be automatically created and used in case none is provided.
+
+## Scheduled maintenance service
+
+If scheduled watchers are being used they open the option to show a list of future maintenance periods, for example on a page dedicated to inform users about future maintenance actions.
+
+```php
+use Janitor\Janitor;
+use Janitor\Watcher\Scheduled\Cron;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
+
+$watchers = [new Cron('0 0 1 * *', new \DateInterval('PT2H'));];
+
+$janitor = new Janitor($watchers);
+
+$response = $janitor(
+    ServerRequestFactory::fromGlobals(),
+    new Response('php://temp'),
+    function ($request, $response) use ($janitor) {
+        // Array of ['start' => \DateTime, 'end' => \DateTime]
+        $scheduledPeriods = $janitor->getScheduledTimes();
+    }
+);
+```
+
+## Examples
 
 ### Slim3
 
 ```php
 use Janitor\Janitor;
-use Janitor\ScheduledWatcher;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Body;
+use Slim\App;
 
-// Initialize Janitor with watchers and excluders
-$janitor = new Janitor($watchers, $excluders);
+$watchers = [];
+$excluders = [];
 
-// Add middleware
-$app->add(function(RequestInterface $request, ResponseInterface $response, callable $next) use ($janitor) {
-    if ($janitor->inMaintenance() && !$janitor->isExcluded()) {
-        $watcher = $janitor->getActiveWatcher();
+$app = new App();
 
-        // Handle maintenance mode
-        $message = 'Maintenance mode is active';
-        if ($watcher instanceof ScheduledWatcher) {
-            $message = 'Maintenance mode is active until' . $watcher->getEnd()->format('Y/m/d H:i:s');
-        }
+// Add middleware (using default Render handler)
+$app->add(new Janitor($watchers, $excluders));
 
-        $body = new Body;
-        $body->write($message);
-
-        return $response->withStatus(503)->withBody($body);
-    }
-
-    return $next($request, $response);
-});
+$app->run();
 ```
 
-### StackPHP
+### Zend Expressive
+
+```php
+use Janitor\Handler\Redirect;
+use Janitor\Janitor;
+use Zend\Expresive\AppFactory;
+
+$watchers = [];
+$excluders = [];
+$handler = new Redirect('/maintenance');
+
+$app = AppFactory::create();
+
+// Add middleware
+$app->pipe(new Janitor($watchers, $excluders, $handler));
+
+$app->run();
+```
+
+### Symfony's HttpFoundation
+
+If using Symfony's HttpFoundation you can still add Janitor to your toolbelt by using Symfony's [PSR HTTP message bridge](https://github.com/symfony/psr-http-message-bridge)
+
+An example using Silex
 
 ```php
 use Janitor\Janitor;
-use Janitor\ScheduledWatcher;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Silex\Application;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Zend\Diactoros\Response;
 
-class Maintenance implements HttpKernelInterface
-{
-    private $app;
-    private $janitor;
+$janitor = new Janitor();
 
-    public function __construct(HttpKernelInterface $app, Janitor $janitor)
-    {
-        $this->app = $app;
-        $this->janitor = $janitor;
-    }
+$app = new Application;
 
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
-    {
-        if ($this->janitor->inMaintenance() && !$this->janitor->isExcluded()) {
-            $watcher = $this->janitor->getActiveWatcher();
-
-            // Handle maintenance mode
-            $message = 'Maintenance mode is active';
-            if ($watcher instanceof ScheduledWatcher) {
-                $message = 'Maintenance mode is active until' . $watcher->getEnd()->format('Y/m/d H:i:s');
-            }
-
-            return new Response($message, 503);
+$app->before(function (Request $request, Application $app) use ($janitor) {
+    $response = $janitor(
+        (new DiactorosFactory)->createRequest($request),
+        new Response('php://temp'),
+        function ($request, $response) {
+            return $response;
         }
+    );
 
-        return $this->app->handle($request, $type, $catch);
-    }
-}
+    return (new HttpFoundationFactory)->createResponse($response);
+});
 
-// Initialize Janitor with watchers and excluders
-$janitor = new Janitor($watchers, $excluders);
-
-$stack = (new \Stack\Builder())
-    ->push('\Maintenance', $janitor);
-
-$app = $stack->resolve($app);
+$app->run();
 ```
 
 ## Contributing
