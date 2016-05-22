@@ -42,7 +42,9 @@ class Fixed extends AbstractScheduled
     {
         $this->setStart($start);
         $this->setEnd($end);
-        $this->setTimeZone($timeZone);
+        if ($timeZone !== null) {
+            $this->setTimeZone($timeZone);
+        }
     }
 
     /**

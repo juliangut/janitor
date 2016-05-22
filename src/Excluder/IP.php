@@ -25,23 +25,39 @@ class IP implements ExcluderInterface
     protected $ips = [];
 
     /**
-     * Allowe proxies.
+     * Allowed proxies.
      *
      * @var array
      */
-    protected $trustedProxies;
+    protected $trustedProxies = [];
 
     /**
-     * @param array $ips
-     * @param array $trustedProxies
+     * @param string|array|null $ips
+     * @param string|array|null $trustedProxies
+     *
+     * @throws \InvalidArgumentException
      */
-    public function __construct(array $ips = [], array $trustedProxies = [])
+    public function __construct($ips = null, $trustedProxies = null)
     {
-        foreach ($ips as $ipAddress) {
-            $this->addIP($ipAddress);
+        if (!is_array($ips)) {
+            $ips = [$ips];
         }
 
-        $this->trustedProxies = $trustedProxies;
+        foreach ($ips as $ipAddress) {
+            if (trim($ipAddress) !== '') {
+                $this->addIP($ipAddress);
+            }
+        }
+
+        if (!is_array($trustedProxies)) {
+            $trustedProxies = [$trustedProxies];
+        }
+
+        foreach ($trustedProxies as $ipAddress) {
+            if (trim($ipAddress) !== '') {
+                $this->addTrustedProxy($ipAddress);
+            }
+        }
     }
 
     /**
@@ -50,6 +66,8 @@ class IP implements ExcluderInterface
      * @param string $ipAddress
      *
      * @throws \InvalidArgumentException
+     *
+     * @return $this
      */
     public function addIP($ipAddress)
     {
@@ -58,6 +76,26 @@ class IP implements ExcluderInterface
         }
 
         $this->ips[] = $ipAddress;
+
+        return $this;
+    }
+
+    /**
+     * Add Trusted proxy.
+     *
+     * @param string $ipAddress
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return $this
+     */
+    public function addTrustedProxy($ipAddress)
+    {
+        if (!$this->isValidIp($ipAddress)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
+        }
+
+        $this->trustedProxies[] = $ipAddress;
 
         return $this;
     }

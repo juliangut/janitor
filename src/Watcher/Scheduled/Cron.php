@@ -32,12 +32,12 @@ class Cron extends AbstractScheduled
     /**
      * Special cron expression shorthands.
      */
-    const YEARLY   = '@yearly';
-    const ANNUALLY = '@annually';
-    const MONTHLY  = '@monthly';
-    const WEEKLY   = '@weekly';
-    const DAILY    = '@daily';
-    const HOURLY   = '@hourly';
+    const PERIOD_YEARLY   = '@yearly';
+    const PERIOD_ANNUALLY = '@annually';
+    const PERIOD_MONTHLY  = '@monthly';
+    const PERIOD_WEEKLY   = '@weekly';
+    const PERIOD_DAILY    = '@daily';
+    const PERIOD_HOURLY   = '@hourly';
 
     /**
      * Mapper for especial cron expression shorthands.
@@ -45,12 +45,12 @@ class Cron extends AbstractScheduled
      * @var array
      */
     protected $expressionMapper = [
-        self::YEARLY   => '0 0 1 1 *',
-        self::ANNUALLY => '0 0 1 1 *',
-        self::MONTHLY  => '0 0 1 * *',
-        self::WEEKLY   => '0 0 * * 0',
-        self::DAILY    => '0 0 * * *',
-        self::HOURLY   => '0 * * * *',
+        self::PERIOD_YEARLY   => '0 0 1 1 *',
+        self::PERIOD_ANNUALLY => '0 0 1 1 *',
+        self::PERIOD_MONTHLY  => '0 0 1 * *',
+        self::PERIOD_WEEKLY   => '0 0 * * 0',
+        self::PERIOD_DAILY    => '0 0 * * *',
+        self::PERIOD_HOURLY   => '0 * * * *',
     ];
 
     /**
@@ -76,7 +76,10 @@ class Cron extends AbstractScheduled
     {
         $this->setExpression($expression);
         $this->setInterval($interval);
-        $this->setTimeZone($timeZone);
+
+        if ($timeZone !== null) {
+            $this->setTimeZone($timeZone);
+        }
     }
 
     /**

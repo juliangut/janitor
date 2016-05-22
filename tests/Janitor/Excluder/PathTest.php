@@ -28,7 +28,7 @@ class PathTest extends \PHPUnit_Framework_TestCase
     public function testIsExcludedByString()
     {
         $request = ServerRequestFactory::fromGlobals();
-        $excluder = new Path($this->excludedPaths);
+        $excluder = new Path($this->excludedPaths[0]);
 
         self::assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/user'))));
     }

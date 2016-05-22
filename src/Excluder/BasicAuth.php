@@ -25,26 +25,33 @@ class BasicAuth implements ExcluderInterface
     protected $users = [];
 
     /**
-     * @param array $users
+     * @param string|array|null $users
+     * @param mixed|null        $password
      */
-    public function __construct(array $users = [])
+    public function __construct($users = null, $password = null)
     {
-        foreach ($users as $username => $password) {
-            $this->addUser($username, $password);
+        if (!is_array($users)) {
+            $users = [$users => $password];
+        }
+
+        foreach ($users as $userName => $userPassword) {
+            $this->addUser($userName, $userPassword);
         }
     }
 
     /**
      * Add user.
      *
-     * @param string      $username
-     * @param string|null $password
+     * @param string     $userName
+     * @param mixed|null $password
      *
      * @return $this
      */
-    public function addUser($username, $password = null)
+    public function addUser($userName, $password = null)
     {
-        $this->users[trim($username)] = $password;
+        if (trim($userName) !== '') {
+            $this->users[trim($userName)] = $password;
+        }
 
         return $this;
     }

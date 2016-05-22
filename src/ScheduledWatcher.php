@@ -24,11 +24,11 @@ interface ScheduledWatcher extends Watcher
     /**
      * Set scheduled time zone.
      *
-     * @param mixed $timeZone
+     * @param \DateTimeZone|string|int $timeZone
      *
      * @throws \InvalidArgumentException
      */
-    public function setTimeZone($timeZone = null);
+    public function setTimeZone($timeZone);
 
     /**
      * Get scheduled start time.

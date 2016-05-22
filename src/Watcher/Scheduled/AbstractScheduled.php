@@ -38,12 +38,19 @@ abstract class AbstractScheduled implements ScheduledWatcher
     /**
      * {@inheritdoc}
      */
-    public function setTimeZone($timeZone = null)
+    public function setTimeZone($timeZone)
     {
-        if ($timeZone !== null && !$timeZone instanceof \DateTimeZone) {
-            try {
-                $timeZone = new \DateTimeZone($timeZone);
-            } catch (\Exception $exception) {
+        if (!$timeZone instanceof \DateTimeZone) {
+            if (is_numeric($timeZone)) {
+                $timeZoneName = timezone_name_from_abbr(null, $timeZone * 3600, true);
+                if ($timeZoneName === false) {
+                    throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
+                }
+                $timeZone = $timeZoneName;
+            }
+
+            $timeZone = @timezone_open((string) $timeZone);
+            if ($timeZone === false) {
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
             }
         }

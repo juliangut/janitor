@@ -35,7 +35,7 @@ class BasicAuthTest extends \PHPUnit_Framework_TestCase
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Authorization', 'Basic ' . base64_encode($authString));
 
-        $excluder = new BasicAuth();
+        $excluder = new BasicAuth;
         $excluder->addUser($username, $password);
 
         self::assertTrue($excluder->isExcluded($request));

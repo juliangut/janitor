@@ -25,12 +25,18 @@ class Path implements ExcluderInterface
     protected $paths = [];
 
     /**
-     * @param array $paths
+     * @param string|array|null $paths
      */
-    public function __construct(array $paths = [])
+    public function __construct($paths = null)
     {
+        if (!is_array($paths)) {
+            $paths = [$paths];
+        }
+
         foreach ($paths as $path) {
-            $this->addPath($path);
+            if (trim($path) !== '') {
+                $this->addPath($path);
+            }
         }
     }
 
@@ -43,7 +49,9 @@ class Path implements ExcluderInterface
      */
     public function addPath($path)
     {
-        $this->paths[] = trim($path);
+        if (trim($path) !== '') {
+            $this->paths[] = trim($path);
+        }
 
         return $this;
     }

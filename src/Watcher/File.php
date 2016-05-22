@@ -24,35 +24,33 @@ class File implements WatcherInterface
     protected $file;
 
     /**
-     * @param string $file
+     * @param string|array|null $files
      */
-    public function __construct($file)
+    public function __construct($files = null)
     {
-        $this->setFile($file);
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+
+        foreach ($files as $file) {
+            $this->addFile($file);
+        }
     }
 
     /**
-     * Set file path.
+     * Add file path.
      *
      * @param string $file
      *
      * @return $this
      */
-    public function setFile($file)
+    public function addFile($file)
     {
-        $this->file = realpath($file);
+        if (trim($file) !== '') {
+            $this->file = realpath(trim($file));
+        }
 
         return $this;
-    }
-
-    /**
-     * Get file path.
-     *
-     * @return string
-     */
-    public function getFile()
-    {
-        return $this->file;
     }
 
     /**

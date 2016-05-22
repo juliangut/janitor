@@ -42,38 +42,32 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->watcher = new Environment('JanitorMaintenance', 'Ok');
-    }
-
-    public function testMutatorsAccessors()
-    {
-        $this->watcher->setVar('JanitorMaintenance');
-        $this->watcher->setValue('On');
-
-        self::assertEquals('JanitorMaintenance', $this->watcher->getVar());
-        self::assertEquals('On', $this->watcher->getValue());
+        $this->watcher = new Environment('JanitorMaintenance');
     }
 
     public function testIsNotActive()
     {
-        self::assertFalse($this->watcher->isActive());
+        putenv('JanitorMaintenance=On');
 
-        $this->watcher->setVar('ficticious-environment-variable');
+        self::assertTrue($this->watcher->isActive());
 
-        self::assertFalse($this->watcher->isActive());
-
-        $this->watcher->setVar('JanitorMaintenance');
-        $this->watcher->setValue('Off');
+        $this->watcher->addVariable('JanitorMaintenance', 'Off');
 
         self::assertFalse($this->watcher->isActive());
+
+        putenv('JanitorMaintenance');
     }
 
     public function testIsActive()
     {
         self::assertFalse($this->watcher->isActive());
 
-        $this->watcher->setValue('On');
+        putenv('JanitorMaintenance=On');
+
+        $this->watcher->addVariable('JanitorMaintenance', 'On');
 
         self::assertTrue($this->watcher->isActive());
+
+        putenv('JanitorMaintenance');
     }
 }

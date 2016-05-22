@@ -19,73 +19,40 @@ class Environment implements WatcherInterface
     /**
      * Environment variable.
      *
-     * @var string
+     * @var array
      */
-    protected $var;
+    protected $vars;
 
     /**
-     * Environment variable value.
+     * @param array|string $vars
+     * @param mixed|null   $value
+     */
+    public function __construct($vars, $value = null)
+    {
+        if (!is_array($vars)) {
+            $vars = [$vars => $value];
+        }
+
+        foreach ($vars as $varName => $varValue) {
+            $this->addVariable($varName, $varValue);
+        }
+    }
+
+    /**
+     * Set environment variable.
      *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * @param string $var
      * @param mixed  $value
-     */
-    public function __construct($var, $value = null)
-    {
-        $this->setVar($var);
-        $this->setValue($value);
-    }
-
-    /**
-     * Set environment variable name.
-     *
-     * @param string $var
      *
      * @return $this
      */
-    public function setVar($var)
+    public function addVariable($var, $value = null)
     {
-        $this->var = (string) $var;
+        if (trim($var) !== '') {
+            $this->vars[trim($var)] = $value;
+        }
 
         return $this;
-    }
-
-    /**
-     * Get environment variable name.
-     *
-     * @return string
-     */
-    public function getVar()
-    {
-        return $this->var;
-    }
-
-    /**
-     * Set environment variable value.
-     *
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * Get environment variable value.
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
     }
 
     /**
@@ -93,10 +60,14 @@ class Environment implements WatcherInterface
      */
     public function isActive()
     {
-        if (getenv($this->var) === false) {
-            return false;
+        foreach ($this->vars as $var => $value) {
+            if ($value === null && getenv($var) !== false) {
+                return true;
+            } elseif ($value !== null && getenv($var) === $value) {
+                return true;
+            }
         }
 
-        return $this->value === null ? true : getenv($this->var) === $this->value;
+        return false;
     }
 }

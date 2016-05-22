@@ -32,9 +32,17 @@ class AbstractScheduledTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testBadTimeZone()
+    public function testBadTimeZoneName()
     {
-        $this->watcher->setTimeZone('unknown');
+        $this->watcher->setTimeZone('World/Unknown');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBadTimeZoneOffset()
+    {
+        $this->watcher->setTimeZone(158622);
     }
 
     public function testTimeZone()
@@ -43,6 +51,9 @@ class AbstractScheduledTest extends \PHPUnit_Framework_TestCase
             (new \DateTimeZone(date_default_timezone_get()))->getName(),
             $this->watcher->getTimeZone()->getName()
         );
+
+        $this->watcher->setTimeZone(1);
+        self::assertEquals('Europe/London', $this->watcher->getTimeZone()->getName());
 
         $this->watcher->setTimeZone('Europe/Madrid');
         self::assertEquals('Europe/Madrid', $this->watcher->getTimeZone()->getName());

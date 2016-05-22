@@ -26,7 +26,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->watcher = new Fixed('yesterday', 'tomorrow');
+        $this->watcher = new Fixed('yesterday', 'tomorrow', 'UTC');
     }
 
     public function testDefaults()
@@ -38,7 +38,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
 
     public function testMutatorsAccessors()
     {
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $end = clone $start;
         $end->add(new \DateInterval('PT1H'));
 
@@ -55,7 +55,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     {
         $this->watcher->setEnd('now');
 
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->add(new \DateInterval('P10D'));
         $this->watcher->setStart($start);
     }
@@ -75,7 +75,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     {
         $this->watcher->setStart('now');
 
-        $end = new \DateTime();
+        $end = new \DateTime('now', new \DateTimeZone('UTC'));
         $end->sub(new \DateInterval('P10D'));
         $this->watcher->setEnd($end);
     }
@@ -92,14 +92,14 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     {
         self::assertEquals([], $this->watcher->getScheduledTimes());
 
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->add(new \DateInterval('P1D'));
         $end = clone $start;
         $this->watcher->setEnd($end);
         $this->watcher->setStart($start);
         self::assertEquals([['start' => $start, 'end' => $end]], $this->watcher->getScheduledTimes());
 
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->sub(new \DateInterval('P1D'));
         $end = clone $start;
         $this->watcher->setStart($start);
@@ -109,7 +109,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeTime()
     {
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->add(new \DateInterval('P1D'));
         $end = clone $start;
         $watcher = new Fixed($start, $end);
@@ -120,7 +120,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
 
     public function testAfterTime()
     {
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->sub(new \DateInterval('P1D'));
         $end = clone $start;
         $watcher = new Fixed($start, $end);

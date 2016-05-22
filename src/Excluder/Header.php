@@ -18,27 +18,42 @@ use Psr\Http\Message\ServerRequestInterface;
 class Header implements ExcluderInterface
 {
     /**
-     * Request header.
+     * Request headers.
      *
-     * @var string
+     * @var array
      */
-    protected $header;
+    protected $headers;
 
     /**
-     * Request header value.
-     *
-     * @var string
+     * @param array|string|null $headers
+     * @param string|null       $value
      */
-    protected $value;
+    public function __construct($headers = null, $value = null)
+    {
+        if (!is_array($headers)) {
+            $headers = [$headers => $value];
+        }
+
+        foreach ($headers as $headerName => $headerValue) {
+            $this->addHeader($headerName, $headerValue);
+        }
+    }
 
     /**
+     * Add header.
+     *
      * @param string      $header
      * @param string|null $value
+     *
+     * @return $this
      */
-    public function __construct($header, $value = null)
+    public function addHeader($header, $value = null)
     {
-        $this->header = $header;
-        $this->value = $value;
+        if (trim($header) !== '') {
+            $this->headers[trim($header)] = $value;
+        }
+
+        return $this;
     }
 
     /**
@@ -46,9 +61,16 @@ class Header implements ExcluderInterface
      */
     public function isExcluded(ServerRequestInterface $request)
     {
-        return $this->value === null
-            ? $request->hasHeader($this->header)
-            : $this->value === $request->getHeaderLine($this->header)
-                || @preg_match($this->value, $request->getHeaderLine($this->header)) === 1;
+        foreach ($this->headers as $header => $value) {
+            if ($value === null && $request->hasHeader($header)) {
+                return true;
+            } elseif ($value !== null && (trim($value) === $request->getHeaderLine($header)
+                || @preg_match(trim($value), $request->getHeaderLine($header)))
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -26,7 +26,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->watcher = new Cron('0 0 1 1 *', 'PT1M');
+        $this->watcher = new Cron('0 0 1 1 *', 'PT1M', 'UTC');
     }
 
     /**
@@ -34,7 +34,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
      */
     public function testExpressionMutatorsAccessors()
     {
-        $this->watcher->setExpression(Cron::ANNUALLY);
+        $this->watcher->setExpression(Cron::PERIOD_ANNUALLY);
         self::assertEquals('0 0 1 1 *', $this->watcher->getExpression());
 
         $this->watcher->setExpression('invalidExpression');
@@ -45,14 +45,14 @@ class CronTest extends \PHPUnit_Framework_TestCase
      */
     public function testIntervalMutatorsAccessors()
     {
-        $this->watcher->setExpression(Cron::YEARLY);
+        $this->watcher->setExpression(Cron::PERIOD_YEARLY);
 
         self::assertNull($this->watcher->getStart());
         self::assertNull($this->watcher->getEnd());
 
         $this->watcher->setInterval('P1Y');
 
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->setDate($start->format('Y'), 1, 1);
         $end = clone $start;
         $end->add(new \DateInterval('P1Y'));
@@ -66,7 +66,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
 
     public function testIsNotActive()
     {
-        $time   = new \DateTime();
+        $time   = new \DateTime('now', new \DateTimeZone('UTC'));
         $minute = $time->format('i');
         $hour   = $time->format('H');
         $day    = $time->format('d');
@@ -89,7 +89,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
 
     public function testIsActive()
     {
-        $time = new \DateTime();
+        $time = new \DateTime('now', new \DateTimeZone('UTC'));
         $minute = $time->format('i');
         $hour   = $time->format('H');
         $day    = $time->format('d');
@@ -114,7 +114,7 @@ class CronTest extends \PHPUnit_Framework_TestCase
 
     public function testScheduledTimes()
     {
-        $currentTime = new \DateTime();
+        $currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $currentTime->setTime($currentTime->format('H'), $currentTime->format('i'));
         $currentTime->add(new \DateInterval('PT1M')); //skip current minute
 

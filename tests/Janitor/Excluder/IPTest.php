@@ -26,15 +26,26 @@ class IPTest extends \PHPUnit_Framework_TestCase
         '204.79.197.200',
     ];
 
+    public function testCreation()
+    {
+        $excluder = new IP;
+        self::assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testCreation()
+    public function testBadIp()
     {
-        $excluder = new IP();
-        self::assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
-
         new IP(['invalidIP']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBadProxyIp()
+    {
+        new IP(null, 'badIp');
     }
 
     public function testIsExcluded()
@@ -48,7 +59,7 @@ class IPTest extends \PHPUnit_Framework_TestCase
 
     public function testIsNotExcluded()
     {
-        $request = ServerRequestFactory::fromGlobals(['REMOTE_ADDR' => '10.10.10.10']);
+        $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('X-Forwarded', '80.80.80.80');
         $excluder = new IP($this->excludedIPs, ['10.10.10.10']);
 

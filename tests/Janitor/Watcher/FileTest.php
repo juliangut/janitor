@@ -52,11 +52,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->watcher = new File(self::$tmpFile);
     }
 
-    public function testAccessors()
-    {
-        self::assertEquals(self::$tmpFile, $this->watcher->getFile());
-    }
-
     public function testIsActive()
     {
         self::assertTrue($this->watcher->isActive());
@@ -64,8 +59,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
     public function testIsNotActive()
     {
-        $this->watcher->setFile('fakeFile');
+        unlink(self::$tmpFile);
 
         self::assertFalse($this->watcher->isActive());
+
+        touch(self::$tmpFile);
     }
 }

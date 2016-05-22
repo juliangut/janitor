@@ -44,19 +44,19 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
 
     public function testScheduled()
     {
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->add(new \DateInterval('P1D'));
         $end = clone $start;
         $end->add(new \DateInterval('PT2H'));
         $scheduledTimes = [['start' => $start, 'end' => $end]];
 
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->add(new \DateInterval('PT2H'));
         $end = clone $start;
         $end->add(new \DateInterval('PT1H'));
         array_unshift($scheduledTimes, ['start' => $start, 'end' => $end]);
 
-        $start = new \DateTime();
+        $start = new \DateTime('now', new \DateTimeZone('UTC'));
         $start->add(new \DateInterval('P1D'));
         $start->add(new \DateInterval('PT1H'));
         $end = clone $start;
