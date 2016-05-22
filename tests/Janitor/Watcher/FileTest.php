@@ -12,14 +12,23 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\File;
 
 /**
- * @covers \Janitor\Watcher\File
+ * Class FileTest
  */
 class FileTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var File
+     */
     protected $watcher;
 
+    /**
+     * @var string
+     */
     protected static $tmpFile;
 
+    /**
+     * {@inheritdoc}
+     */
     public static function setUpBeforeClass()
     {
         self::$tmpFile = sys_get_temp_dir() . '/maintenance';
@@ -27,41 +36,36 @@ class FileTest extends \PHPUnit_Framework_TestCase
         touch(self::$tmpFile);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function tearDownAfterClass()
     {
         unlink(self::$tmpFile);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->watcher = new File(self::$tmpFile);
     }
 
-    /**
-     * @covers \Janitor\Watcher\File::getFile
-     */
     public function testAccessors()
     {
-        $this->assertEquals(self::$tmpFile, $this->watcher->getFile());
+        self::assertEquals(self::$tmpFile, $this->watcher->getFile());
     }
 
-    /**
-     * @covers \Janitor\Watcher\File::setFile
-     * @covers \Janitor\Watcher\File::isActive
-     */
     public function testIsActive()
     {
-        $this->assertTrue($this->watcher->isActive());
+        self::assertTrue($this->watcher->isActive());
     }
 
-    /**
-     * @covers \Janitor\Watcher\File::setFile
-     * @covers \Janitor\Watcher\File::isActive
-     */
     public function testIsNotActive()
     {
         $this->watcher->setFile('fakeFile');
 
-        $this->assertFalse($this->watcher->isActive());
+        self::assertFalse($this->watcher->isActive());
     }
 }

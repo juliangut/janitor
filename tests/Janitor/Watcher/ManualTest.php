@@ -12,27 +12,29 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\Manual;
 
 /**
- * @covers \Janitor\Watcher\Manual
+ * Class ManualTest
  */
 class ManualTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Manual
+     */
     protected $watcher;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->watcher = new Manual;
     }
 
-    /**
-     * @covers \Janitor\Watcher\Manual::setActive
-     * @covers \Janitor\Watcher\Manual::isActive
-     */
     public function testMutatorsAccessors()
     {
-        $this->assertFalse($this->watcher->isActive());
+        self::assertFalse($this->watcher->isActive());
 
         $this->watcher->setActive(true);
 
-        $this->assertTrue($this->watcher->isActive());
+        self::assertTrue($this->watcher->isActive());
     }
 }

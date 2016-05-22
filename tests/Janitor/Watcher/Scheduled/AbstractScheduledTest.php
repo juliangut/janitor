@@ -9,23 +9,27 @@
 
 namespace Janitor\Test\Watcher\Scheduled;
 
-use Janitor\Watcher\Scheduled\Fixed;
+use Janitor\Watcher\Scheduled\AbstractScheduled;
 
 /**
- * @covers \Janitor\Watcher\Scheduled\Fixed
+ * Class AbstractScheduledTest
  */
 class AbstractScheduledTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var AbstractScheduled
+     */
     protected $watcher;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
-        $this->watcher = new Fixed('yesterday', 'tomorrow');
+        $this->watcher = $this->getMockForAbstractClass(AbstractScheduled::class);
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::setTimeZone
-     *
      * @expectedException \InvalidArgumentException
      */
     public function testBadTimeZone()
@@ -33,18 +37,14 @@ class AbstractScheduledTest extends \PHPUnit_Framework_TestCase
         $this->watcher->setTimeZone('unknown');
     }
 
-    /**
-     * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::setTimeZone
-     * @covers \Janitor\Watcher\Scheduled\AbstractScheduled::getTimeZone
-     */
     public function testTimeZone()
     {
-        $this->assertEquals(
+        self::assertEquals(
             (new \DateTimeZone(date_default_timezone_get()))->getName(),
             $this->watcher->getTimeZone()->getName()
         );
 
         $this->watcher->setTimeZone('Europe/Madrid');
-        $this->assertEquals('Europe/Madrid', $this->watcher->getTimeZone()->getName());
+        self::assertEquals('Europe/Madrid', $this->watcher->getTimeZone()->getName());
     }
 }

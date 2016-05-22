@@ -1,84 +1,25 @@
+'use strict';
+
 module.exports = function(grunt) {
   require('time-grunt')(grunt);
-  require('load-grunt-tasks')(grunt);
+  require('jit-grunt')(grunt);
 
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+  grunt.loadNpmTasks('grunt-composer');
 
-    phplint: {
-      options: {
-        swapPath: '/tmp'
-      },
-      application: [
-        'src/**/*.php',
-        'tests/**/*.php'
-      ]
-    },
-    phpcs: {
-      options: {
-        bin: 'vendor/bin/phpcs',
-        standard: 'PSR2'
-      },
-      application: {
-        dir: [
-          'src',
-          'tests'
-        ]
-      }
-    },
-    phpmd: {
-      options: {
-        bin: 'vendor/bin/phpmd',
-        rulesets: 'phpmd.xml',
-        reportFormat: 'text'
-      },
-      application: {
-        dir: 'src'
-      }
-    },
-    phpcpd: {
-      options: {
-        bin: 'vendor/bin/phpcpd',
-        quiet: false,
-        ignoreExitCode: true
-      },
-      application: {
-        dir: 'src'
-      }
-    },
-    climb: {
-      options: {
-        bin: 'vendor/bin/climb',
-        exclude: [
-          'phpunit/phpunit'
-        ]
-      },
-      application: {
-        directory: './'
-      }
-    },
-    security_checker: {
-      options: {
-        bin: 'vendor/bin/security-checker',
-        format: 'text'
-      },
-      application: {
-        file: 'composer.json'
-      },
-    },
-    phpunit: {
-      options: {
-        bin: 'vendor/bin/phpunit',
-        coverage: true
-      },
-      application: {
-        coverageHtml: 'build/coverage'
-      }
+  var settings = {
+    config: {
+      src: ['grunt/*.js']
     }
+  };
+  grunt.initConfig(require('load-grunt-configs')(grunt, settings));
+
+  grunt.registerTask('qa', ['phplint', 'phpcs', 'phpmd', 'phpcpd']);
+  grunt.registerTask('test', ['phpunit']);
+  grunt.registerTask('security', ['composer:outdated:direct', 'security_checker']);
+
+  grunt.task.registerTask('build', 'Project build', function() {
+    grunt.log.writeln('Task ready to be implemented');
   });
 
-  grunt.registerTask('check', ['phplint', 'phpcs', 'phpmd', 'phpcpd']);
-  grunt.registerTask('security', ['climb', 'security_checker']);
-  grunt.registerTask('test', ['phpunit']);
-  grunt.registerTask('default', ['check', 'security', 'test']);
+  grunt.registerTask('default', ['qa', 'test']);
 };

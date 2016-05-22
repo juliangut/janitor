@@ -39,6 +39,8 @@ class BasicAuth implements ExcluderInterface
      *
      * @param string      $username
      * @param string|null $password
+     *
+     * @return $this
      */
     public function addUser($username, $password = null)
     {
@@ -66,7 +68,7 @@ class BasicAuth implements ExcluderInterface
     /**
      * Retrieve request authentication information.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
      * @return array
      */

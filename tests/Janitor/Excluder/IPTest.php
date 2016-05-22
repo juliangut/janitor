@@ -13,10 +13,13 @@ use Janitor\Excluder\IP;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * @covers \Janitor\Excluder\IP
+ * Class IPTest
  */
 class IPTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var array
+     */
     protected $excludedIPs = [
         '98.139.183.24',
         '74.125.230.5',
@@ -24,43 +27,31 @@ class IPTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
-     * @covers \Janitor\Excluder\IP::__construct
-     * @covers \Janitor\Excluder\IP::addIP
-     * @covers \Janitor\Excluder\IP::isExcluded
-     *
      * @expectedException \InvalidArgumentException
      */
     public function testCreation()
     {
         $excluder = new IP();
-        $this->assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
+        self::assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
 
         new IP(['invalidIP']);
     }
 
-    /**
-     * @covers \Janitor\Excluder\IP::__construct
-     * @covers \Janitor\Excluder\IP::addIP
-     * @covers \Janitor\Excluder\IP::isExcluded
-     */
     public function testIsExcluded()
     {
-        $request = ServerRequestFactory::fromGlobals();
+        $request = ServerRequestFactory::fromGlobals(['REMOTE_ADDR' => '74.125.230.5']);
         $request = $request->withHeader('Client-Ip', '74.125.230.5');
         $excluder = new IP($this->excludedIPs);
 
-        $this->assertTrue($excluder->isExcluded($request));
+        self::assertTrue($excluder->isExcluded($request));
     }
 
-    /**
-     * @covers \Janitor\Excluder\IP::isExcluded
-     */
     public function testIsNotExcluded()
     {
         $request = ServerRequestFactory::fromGlobals(['REMOTE_ADDR' => '10.10.10.10']);
         $request = $request->withHeader('X-Forwarded', '80.80.80.80');
         $excluder = new IP($this->excludedIPs, ['10.10.10.10']);
 
-        $this->assertFalse($excluder->isExcluded($request));
+        self::assertFalse($excluder->isExcluded($request));
     }
 }

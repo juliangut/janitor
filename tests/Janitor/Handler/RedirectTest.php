@@ -10,64 +10,57 @@
 namespace Janitor\Test\Handler;
 
 use Janitor\Handler\Redirect;
+use Janitor\ScheduledWatcher;
+use Janitor\Watcher;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 
 /**
- * @covers \Janitor\Handler\Redirect
+ * Class RedirectTest
  */
 class RedirectTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers \Janitor\Handler\Redirect::__construct
-     * @covers \Janitor\Handler\Redirect::__invoke
-     */
     public function testAbsouteRedirection()
     {
-        $watcher = $this->getMock('Janitor\\Watcher');
+        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
         $handler = new Redirect('http://example.com');
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://example.com', $response->getHeaderLine('Location'));
-        $this->assertEquals('no-cache', $response->getHeaderLine('Pragma'));
-        $this->assertTrue($response->hasHeader('Cache-Control'));
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals('http://example.com', $response->getHeaderLine('Location'));
+        self::assertEquals('no-cache', $response->getHeaderLine('Pragma'));
+        self::assertTrue($response->hasHeader('Cache-Control'));
     }
 
-    /**
-     * @covers \Janitor\Handler\Redirect::__construct
-     * @covers \Janitor\Handler\Redirect::__invoke
-     */
     public function testRelativeRedirection()
     {
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withUri($request->getUri()->withHost('mydomain.com'));
 
-        $watcher = $this->getMock('Janitor\\Watcher');
+        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
         $handler = new Redirect('/maintenance');
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler($request, new Response('php://temp'), $watcher);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://mydomain.com/maintenance', $response->getHeaderLine('Location'));
-        $this->assertEquals('no-cache', $response->getHeaderLine('Pragma'));
-        $this->assertTrue($response->hasHeader('Cache-Control'));
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals('http://mydomain.com/maintenance', $response->getHeaderLine('Location'));
+        self::assertEquals('no-cache', $response->getHeaderLine('Pragma'));
+        self::assertTrue($response->hasHeader('Cache-Control'));
     }
 
-    /**
-     * @covers \Janitor\Handler\Redirect::__construct
-     * @covers \Janitor\Handler\Redirect::__invoke
-     */
     public function testRedirectScheduled()
     {
-        $watcher = $this->getMock('Janitor\\ScheduledWatcher');
-        $watcher->expects($this->once())->method('getEnd')->will($this->returnValue(new \DateTime));
+        $watcher = $this->getMockBuilder(ScheduledWatcher::class)->disableOriginalConstructor()->getMock();
+        $watcher->expects(self::once())->method('getEnd')->will(self::returnValue(new \DateTime));
         $handler = new Redirect('http://example.com');
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($response->hasHeader('Expires'));
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertTrue($response->hasHeader('Expires'));
     }
 }

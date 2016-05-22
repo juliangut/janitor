@@ -12,16 +12,19 @@ namespace Janitor;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Maintenance handler interface.
+ */
 interface Handler
 {
     /**
      * Run handler.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param \Janitor\Watcher                         $watcher
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param Watcher                $watcher
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher);
 }

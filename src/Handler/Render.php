@@ -73,7 +73,7 @@ class Render implements HandlerInterface
     /**
      * Render HTML maintenance message.
      *
-     * @param \Janitor\Watcher $watcher
+     * @param Watcher $watcher
      *
      * @return string
      */
@@ -96,26 +96,26 @@ class Render implements HandlerInterface
     /**
      * Render JSON maintenance message.
      *
-     * @param \Janitor\Watcher $watcher
+     * @param Watcher $watcher
      *
      * @return string
      */
     protected function renderJson(Watcher $watcher)
     {
-        return json_encode(['message' => $this->getMaintenanceMessage($watcher)], JSON_PRETTY_PRINT);
+        return json_encode(['message' => $this->getMaintenanceMessage($watcher)]);
     }
 
     /**
      * Render XML maintenance message.
      *
-     * @param \Janitor\Watcher $watcher
+     * @param Watcher $watcher
      *
      * @return string
      */
     protected function renderXml(Watcher $watcher)
     {
         return sprintf(
-            "<maintenance>\n  <message>%s</message>\n</maintenance>",
+            "<maintenance><message>%s</message></maintenance>",
             $this->getMaintenanceMessage($watcher)
         );
     }
@@ -123,7 +123,7 @@ class Render implements HandlerInterface
     /**
      * Retrieve custom maintenance message.
      *
-     * @param \Janitor\Watcher $watcher
+     * @param Watcher $watcher
      *
      * @return string
      */
@@ -142,7 +142,7 @@ class Render implements HandlerInterface
     /**
      * Determine content type using Accept header.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
      * @return string
      */

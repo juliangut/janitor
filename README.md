@@ -9,13 +9,15 @@
 
 # Janitor
 
-Effortless maintenance management.
+Effortless maintenance management for PSR7.
 
-Janitor is a ready to use PSR7 middleware that provides you with an easy configurable and extensible way to handle maintenance mode on your project, because maintenance handling goes beyond responding to the user with an HTTP 503 code and a simple message.
+Janitor is a ready to use PSR7 package that provides you with an easy configurable and extensible way to handle maintenance mode on your project, because maintenance handling goes beyond responding to the user with an HTTP 503 code and a simple message.
 
-Set several conditions that will be checked to determine if the maintenance handler should be triggered. This conditions are of two kinds, 'activation' conditions (name `watchers`) and conditions to bypass the normal execution (named `excluders`). Default watchers and excluders allows you to cover a wide range of situations so you can drop Janitor in and start in no time, but if needed it's very easy to create your own conditions.
+Set several conditions that will be checked to determine if the maintenance handler should be triggered. This conditions are of two kinds, 'activation' conditions (named `watchers`) and conditions to bypass the normal execution (named `excluders`).
 
-Once Janitor has determine maintenance mode is active it let you use your handler to get a response ready for the user or you can let Janitor handle it all by itself (a nicely formatted 503 response).
+Already builtin watchers and excluders allows you to cover a wide range of situations so you can drop Janitor in and start in no time, but at the same time it's very easy to create your own conditions if needed.
+
+Once Janitor has determined maintenance mode is active it let you use your handler to get a response ready for the user or you can let Janitor handle it all by itself (a nicely formatted 503 response).
 
 > Learn more in [Janitor's page](http://juliangut.com/janitor)
 
@@ -58,7 +60,7 @@ $excluders = [
 ];
 
 $handler = function (ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher) {
-    $response->getBody()->write('I am in maintenance mode!');
+    $response->getBody()->write('This page is in maintenance mode!');
 
     return $response;
 }
@@ -83,7 +85,7 @@ $response = $janitor(
 Watchers serve different means to activate maintenance mode by verifying conditions to be met.
 
 * `Manual` Just set it to be active. Useful to be used with a configuration parameter.
-* `File` Checks the existance of the provided file.
+* `File` Checks the existence of the provided file.
 * `Environment` Checks if an environment variable is set to a value.
 
 ```php
@@ -100,7 +102,7 @@ $envWatcher = new \Janitor\Watcher\Environment('maintenance', 'ON');
 $envWatcher->isActive();
 ```
 
-### Scheduled whatchers
+### Scheduled watchers
 
 Scheduled watchers are a special type of watchers that identify a point in time in the future for a maintenance period.
 
@@ -181,7 +183,7 @@ function (\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\R
 Two really basic handlers are suplied by default to cope with maintenance mode.
 
 * `Render` Sets response with 503 code and add basic formatted maintenance output based on request's Accept header.
-* `Redirect` Prepares response to be a 302 redirection to a configured URL (tipically maintenance page).
+* `Redirect` Prepares response to be a 302 redirection to a configured URL (typically maintenance page).
 
 Of the two `Render` will be automatically created and used in case none is provided.
 
@@ -249,7 +251,7 @@ $app->run();
 
 ### Symfony's HttpFoundation
 
-If using Symfony's HttpFoundation you can still add Janitor to your toolbelt by using Symfony's [PSR HTTP message bridge](https://github.com/symfony/psr-http-message-bridge)
+If using Symfony's HttpFoundation you can still add Janitor to your tool belt by using Symfony's [PSR HTTP message bridge](https://github.com/symfony/psr-http-message-bridge)
 
 An example using Silex
 

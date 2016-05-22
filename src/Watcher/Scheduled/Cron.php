@@ -85,6 +85,8 @@ class Cron extends AbstractScheduled
      * @param \Cron\CronExpression|string $expression
      *
      * @throws \InvalidArgumentException
+     *
+     * @return $this
      */
     public function setExpression($expression)
     {
@@ -121,6 +123,8 @@ class Cron extends AbstractScheduled
      * @param \DateInterval|string $interval
      *
      * @throws \InvalidArgumentException
+     *
+     * @return $this
      */
     public function setInterval($interval)
     {
@@ -189,14 +193,16 @@ class Cron extends AbstractScheduled
             $now = new \DateTime('now', $this->getTimeZone());
 
             $runDates = $this->expression->getMultipleRunDates($count, $now);
+        // @codeCoverageIgnoreStart
         } catch (\RuntimeException $exception) {
             return [];
         }
+        // @codeCoverageIgnoreEnd
 
         $interval = $this->interval;
 
         return array_map(
-            function ($start) use ($interval) {
+            function (\DateTime $start) use ($interval) {
                 $end = clone $start;
                 $end->add($interval);
 
@@ -218,9 +224,11 @@ class Cron extends AbstractScheduled
             $now = new \DateTime('now', $this->getTimeZone());
 
             return $this->expression->getNextRunDate($now) instanceof \DateTime;
+        // @codeCoverageIgnoreStart
         } catch (\Exception $exception) {
             return false;
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -233,9 +241,11 @@ class Cron extends AbstractScheduled
         try {
             $limitDate = $this->expression->getPreviousRunDate($now, 0, true);
             $limitDate->add($this->interval);
+        // @codeCoverageIgnoreStart
         } catch (\RuntimeException $exception) {
             return false;
         }
+        // @codeCoverageIgnoreEnd
 
         return $now <= $limitDate;
     }

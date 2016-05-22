@@ -51,6 +51,8 @@ class Fixed extends AbstractScheduled
      * @param mixed $start
      *
      * @throws \InvalidArgumentException
+     *
+     * @return $this
      */
     public function setStart($start)
     {
@@ -85,6 +87,8 @@ class Fixed extends AbstractScheduled
      * @param mixed $end
      *
      * @throws \InvalidArgumentException
+     *
+     * @return $this
      */
     public function setEnd($end)
     {

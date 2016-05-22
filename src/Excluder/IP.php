@@ -85,7 +85,7 @@ class IP implements ExcluderInterface
      *
      * @return string
      */
-    protected function determineCurrentIp($request)
+    protected function determineCurrentIp(ServerRequestInterface $request)
     {
         $inspectionHeaders = [
             'X-Forwarded-For',
@@ -94,22 +94,44 @@ class IP implements ExcluderInterface
             'Client-Ip',
         ];
 
-        $currentIp = null;
-        $serverParams = $request->getServerParams();
-        if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIp($serverParams['REMOTE_ADDR'])) {
-            $currentIp = $serverParams['REMOTE_ADDR'];
-        }
+        $currentIp = $this->getIpFromServerParams($request);
 
-        if (empty($this->trustedProxies) || in_array($currentIp, $this->trustedProxies)) {
-            foreach ($inspectionHeaders as $header) {
+        if (!count($this->trustedProxies) || in_array($currentIp, $this->trustedProxies, true)) {
+            $trustedIp = null;
+
+            $headers = $inspectionHeaders;
+            while ($trustedIp === null && $header = array_shift($headers)) {
                 if ($request->hasHeader($header)) {
-                    $ipAddress = trim(current(explode(',', $request->getHeaderLine($header))));
+                    $ipAddress = trim(array_shift(explode(',', $request->getHeaderLine($header))));
+
                     if ($this->isValidIp($ipAddress)) {
-                        $currentIp = $ipAddress;
-                        break;
+                        $trustedIp = $ipAddress;
                     }
                 }
             }
+
+            if ($trustedIp !== null) {
+                $currentIp = $trustedIp;
+            }
+        }
+
+        return $currentIp;
+    }
+
+    /**
+     * Return current IP retrieved from server parameters.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    private function getIpFromServerParams(ServerRequestInterface $request)
+    {
+        $currentIp = null;
+
+        $serverParams = $request->getServerParams();
+        if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIp($serverParams['REMOTE_ADDR'])) {
+            $currentIp = $serverParams['REMOTE_ADDR'];
         }
 
         return $currentIp;

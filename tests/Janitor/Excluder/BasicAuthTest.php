@@ -13,20 +13,19 @@ use Janitor\Excluder\BasicAuth;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * @covers \Janitor\Excluder\BasicAuth
+ * Class BasicAuthTest
  */
 class BasicAuthTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var array
+     */
     protected $excludedUsers = [
         'root' => 'secret',
         'guest' => null,
     ];
 
     /**
-     * @covers \Janitor\Excluder\BasicAuth::addUser
-     * @covers \Janitor\Excluder\BasicAuth::isExcluded
-     * @covers \Janitor\Excluder\BasicAuth::getAuth
-     *
      * @dataProvider usersProvider
      */
     public function testIsExcluded($username, $password)
@@ -39,7 +38,7 @@ class BasicAuthTest extends \PHPUnit_Framework_TestCase
         $excluder = new BasicAuth();
         $excluder->addUser($username, $password);
 
-        $this->assertTrue($excluder->isExcluded($request));
+        self::assertTrue($excluder->isExcluded($request));
     }
 
     /**
@@ -55,16 +54,11 @@ class BasicAuthTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @covers \Janitor\Excluder\BasicAuth::__construct
-     * @covers \Janitor\Excluder\BasicAuth::isExcluded
-     * @covers \Janitor\Excluder\BasicAuth::getAuth
-     */
     public function testIsNotExcluded()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new BasicAuth(['root' => 'secret']);
 
-        $this->assertFalse($excluder->isExcluded($request));
+        self::assertFalse($excluder->isExcluded($request));
     }
 }

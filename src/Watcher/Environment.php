@@ -44,6 +44,8 @@ class Environment implements WatcherInterface
      * Set environment variable name.
      *
      * @param string $var
+     *
+     * @return $this
      */
     public function setVar($var)
     {
@@ -66,6 +68,8 @@ class Environment implements WatcherInterface
      * Set environment variable value.
      *
      * @param mixed $value
+     *
+     * @return $this
      */
     public function setValue($value)
     {

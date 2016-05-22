@@ -9,6 +9,9 @@
 
 namespace Janitor;
 
+/**
+ * Default maintenance watcher interface.
+ */
 interface Watcher
 {
     /**

@@ -38,6 +38,8 @@ class Path implements ExcluderInterface
      * Add path.
      *
      * @param string $path
+     *
+     * @return $this
      */
     public function addPath($path)
     {

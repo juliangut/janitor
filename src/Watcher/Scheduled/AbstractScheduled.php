@@ -11,6 +11,9 @@ namespace Janitor\Watcher\Scheduled;
 
 use Janitor\ScheduledWatcher;
 
+/**
+ * Class AbstractScheduled
+ */
 abstract class AbstractScheduled implements ScheduledWatcher
 {
     /**

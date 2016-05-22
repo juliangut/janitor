@@ -1,6 +1,7 @@
 !.gitignore
+composer.lock
 composer.phar
 vendor/
-!composer.lock
-build/
 node_modules/
+.yo-rc.json
+dist/

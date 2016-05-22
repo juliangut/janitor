@@ -12,72 +12,68 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\Environment;
 
 /**
- * @covers \Janitor\Watcher\Environment
+ * Class EnvironmentTest
  */
 class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Environment
+     */
     protected $watcher;
 
+    /**
+     * {@inheritdoc}
+     */
     public static function setUpBeforeClass()
     {
         putenv('JanitorMaintenance=On');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function tearDownAfterClass()
     {
         putenv('JanitorMaintenance');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->watcher = new Environment('JanitorMaintenance', 'Ok');
     }
 
-    /**
-     * @covers \Janitor\Watcher\Environment::setVar
-     * @covers \Janitor\Watcher\Environment::getVar
-     * @covers \Janitor\Watcher\Environment::setValue
-     * @covers \Janitor\Watcher\Environment::getValue
-     */
     public function testMutatorsAccessors()
     {
         $this->watcher->setVar('JanitorMaintenance');
         $this->watcher->setValue('On');
 
-        $this->assertEquals('JanitorMaintenance', $this->watcher->getVar());
-        $this->assertEquals('On', $this->watcher->getValue());
+        self::assertEquals('JanitorMaintenance', $this->watcher->getVar());
+        self::assertEquals('On', $this->watcher->getValue());
     }
 
-    /**
-     * @covers \Janitor\Watcher\Environment::setVar
-     * @covers \Janitor\Watcher\Environment::setValue
-     * @covers \Janitor\Watcher\Environment::isActive
-     */
     public function testIsNotActive()
     {
-        $this->assertFalse($this->watcher->isActive());
+        self::assertFalse($this->watcher->isActive());
 
         $this->watcher->setVar('ficticious-environment-variable');
 
-        $this->assertFalse($this->watcher->isActive());
+        self::assertFalse($this->watcher->isActive());
 
         $this->watcher->setVar('JanitorMaintenance');
         $this->watcher->setValue('Off');
 
-        $this->assertFalse($this->watcher->isActive());
+        self::assertFalse($this->watcher->isActive());
     }
 
-    /**
-     * @covers \Janitor\Watcher\Environment::setVar
-     * @covers \Janitor\Watcher\Environment::setValue
-     * @covers \Janitor\Watcher\Environment::isActive
-     */
     public function testIsActive()
     {
-        $this->assertFalse($this->watcher->isActive());
+        self::assertFalse($this->watcher->isActive());
 
         $this->watcher->setValue('On');
 
-        $this->assertTrue($this->watcher->isActive());
+        self::assertTrue($this->watcher->isActive());
     }
 }

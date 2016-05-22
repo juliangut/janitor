@@ -35,10 +35,12 @@ class Manual implements WatcherInterface
      * Set maintenance mode active.
      *
      * @param bool $active
+     *
+     * @return $this
      */
     public function setActive($active = true)
     {
-        $this->active = boolval($active);
+        $this->active = (bool) $active;
 
         return $this;
     }

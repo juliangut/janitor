@@ -13,6 +13,9 @@ use Janitor\Handler\Render as RenderHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Class Janitor.
+ */
 class Janitor
 {
     /**
@@ -70,7 +73,9 @@ class Janitor
     /**
      * Add maintenance watcher.
      *
-     * @param \Janitor\Watcher $watcher
+     * @param Watcher $watcher
+     *
+     * @return $this
      */
     public function addWatcher(Watcher $watcher)
     {
@@ -82,7 +87,9 @@ class Janitor
     /**
      * Add excluder condition.
      *
-     * @param \Janitor\Excluder $excluder
+     * @param Excluder $excluder
+     *
+     * @return $this
      */
     public function addExcluder(Excluder $excluder)
     {
@@ -95,6 +102,8 @@ class Janitor
      * Set handler.
      *
      * @param callable $handler
+     *
+     * @return $this
      */
     public function setHandler(callable $handler)
     {
@@ -107,6 +116,8 @@ class Janitor
      * Set request attribute name to store active watcher.
      *
      * @param string $attributeName
+     *
+     * @return $this
      */
     public function setAttributeName($attributeName)
     {
@@ -161,11 +172,11 @@ class Janitor
     /**
      * Run middleware.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param callable                                 $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -183,9 +194,9 @@ class Janitor
     }
 
     /**
-     * Get currenlty active watcher.
+     * Get currently active watcher.
      *
-     * @return \Janitor\Watcher|null
+     * @return Watcher|null
      */
     protected function getActiveWatcher()
     {
@@ -201,7 +212,7 @@ class Janitor
     /**
      * Whether excluding conditions are met.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
      * @return bool
      */

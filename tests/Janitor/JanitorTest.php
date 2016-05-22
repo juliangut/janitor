@@ -9,31 +9,39 @@
 
 namespace Janitor\Test;
 
+use Janitor\Excluder;
 use Janitor\Janitor;
+use Janitor\ScheduledWatcher;
+use Janitor\Watcher;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 
 /**
- * @covers \Janitor\Janitor
+ * Class JanitorTest
  */
 class JanitorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Janitor
+     */
     protected $janitor;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
-        $watcher = $this->getMock('Janitor\\Watcher');
-        $watcher->expects($this->any())->method('isActive')->will($this->returnValue(false));
+        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
+        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(false));
 
-        $excluder = $this->getMock('Janitor\\Excluder');
-        $excluder->expects($this->any())->method('isExcluded')->will($this->returnValue(false));
+        $excluder = $this->getMockBuilder(Excluder::class)->disableOriginalConstructor()->getMock();
+        $excluder->expects(self::any())->method('isExcluded')->will(self::returnValue(false));
 
         $this->janitor = new Janitor([$watcher], [$excluder]);
     }
 
-    /**
-     * @covers \Janitor\Janitor::getScheduledTimes
-     */
     public function testScheduled()
     {
         $start = new \DateTime();
@@ -57,127 +65,104 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
         $scheduledTimes[] = ['start' => $start, 'end' => $end];
 
         foreach ($scheduledTimes as $times) {
-            $watcher = $this->getMock('Janitor\\ScheduledWatcher');
-            $watcher->expects($this->any())->method('isActive')->will($this->returnValue(true));
-            $watcher->expects($this->any())->method('isScheduled')->will($this->returnValue(true));
-            $watcher->expects($this->any())->method('getScheduledTimes')->will($this->returnValue([$times]));
+            $watcher = $this->getMockBuilder(ScheduledWatcher::class)->disableOriginalConstructor()->getMock();
+            $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
+            $watcher->expects(self::any())->method('isScheduled')->will(self::returnValue(true));
+            $watcher->expects(self::any())->method('getScheduledTimes')->will(self::returnValue([$times]));
 
             $this->janitor->addWatcher($watcher);
         }
 
-        $this->assertEquals($scheduledTimes, $this->janitor->getScheduledTimes());
+        self::assertEquals($scheduledTimes, $this->janitor->getScheduledTimes());
     }
 
-    /**
-     * @covers \Janitor\Janitor::__invoke
-     * @covers \Janitor\Janitor::getActiveWatcher
-     * @covers \Janitor\Janitor::isExcluded
-     */
     public function testNoActiveWatcher()
     {
         $janitor = $this->janitor;
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),
-            function ($request, $response) {
+            function (ServerRequestInterface $request, ResponseInterface $response) {
                 return $response->withHeader('janitor', 'tested');
             }
         );
-        $this->assertEquals('tested', $response->getHeaderLine('janitor'));
+        self::assertEquals('tested', $response->getHeaderLine('janitor'));
     }
 
-    /**
-     * @covers \Janitor\Janitor::addWatcher
-     * @covers \Janitor\Janitor::__invoke
-     * @covers \Janitor\Janitor::getActiveWatcher
-     * @covers \Janitor\Janitor::isExcluded
-     * @covers \Janitor\Janitor::getHandler
-     */
     public function testDefaultHandler()
     {
         $janitor = $this->janitor;
 
-        $watcher = $this->getMock('Janitor\\Watcher');
-        $watcher->expects($this->any())->method('isActive')->will($this->returnValue(true));
+        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
+        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
         $this->janitor->addWatcher($watcher);
 
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Accept', 'application/json');
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             $request,
             new Response('php://temp'),
             function () {
             }
         );
-        $this->assertTrue(substr($response->getBody(), 0, 1) === '{');
+        self::assertSame(strpos($response->getBody(), '{'), 0);
     }
 
-    /**
-     * @covers \Janitor\Janitor::addWatcher
-     * @covers \Janitor\Janitor::__invoke
-     * @covers \Janitor\Janitor::setHandler
-     * @covers \Janitor\Janitor::getActiveWatcher
-     * @covers \Janitor\Janitor::isExcluded
-     * @covers \Janitor\Janitor::getHandler
-     */
     public function testCustomHandler()
     {
         $janitor = $this->janitor;
 
-        $watcher = $this->getMock('Janitor\\Watcher');
-        $watcher->expects($this->any())->method('isActive')->will($this->returnValue(true));
+        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
+        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
         $this->janitor->addWatcher($watcher);
 
-        $this->janitor->setHandler(function ($request, $response, $watcher) {
-            return $response->withHeader('active_watcher', get_class($watcher));
-        });
+        $this->janitor->setHandler(
+            function (ServerRequestInterface $request, ResponseInterface $response, $watcher) {
+                return $response->withHeader('active_watcher', get_class($watcher));
+            }
+        );
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),
             function () {
             }
         );
-        $this->assertEquals(get_class($watcher), $response->getHeaderLine('active_watcher'));
+        self::assertEquals(get_class($watcher), $response->getHeaderLine('active_watcher'));
     }
 
-    /**
-     * @covers \Janitor\Janitor::addWatcher
-     * @covers \Janitor\Janitor::addExcluder
-     * @covers \Janitor\Janitor::setAttributeName
-     * @covers \Janitor\Janitor::getAttributeName
-     * @covers \Janitor\Janitor::__invoke
-     * @covers \Janitor\Janitor::getActiveWatcher
-     * @covers \Janitor\Janitor::isExcluded
-     */
     public function testIsExcluded()
     {
         $janitor = $this->janitor;
 
-        $watcher = $this->getMock('Janitor\\Watcher');
-        $watcher->expects($this->any())->method('isActive')->will($this->returnValue(true));
+        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
+        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
         $this->janitor->addWatcher($watcher);
 
-        $excluder = $this->getMock('Janitor\\Excluder');
-        $excluder->expects($this->once())->method('isExcluded')->will($this->returnValue(true));
+        $excluder = $this->getMockBuilder(Excluder::class)->disableOriginalConstructor()->getMock();
+        $excluder->expects(self::once())->method('isExcluded')->will(self::returnValue(true));
         $this->janitor->addExcluder($excluder);
 
         $customAttributeName = 'custom';
         $this->janitor->setAttributeName($customAttributeName);
-        $this->assertEquals($customAttributeName, $this->janitor->getAttributeName());
+        self::assertEquals($customAttributeName, $this->janitor->getAttributeName());
 
+        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),
-            function ($request, $response) use ($customAttributeName) {
+            function (ServerRequestInterface $request, ResponseInterface $response) use ($customAttributeName) {
                 return $response->withHeader(
                     $customAttributeName,
                     get_class($request->getAttribute($customAttributeName))
                 );
             }
         );
-        $this->assertEquals(get_class($watcher), $response->getHeaderLine($customAttributeName));
+        self::assertEquals(get_class($watcher), $response->getHeaderLine($customAttributeName));
     }
 }

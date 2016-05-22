@@ -13,49 +13,39 @@ use Janitor\Excluder\Path;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * @covers \Janitor\Excluder\Path
+ * Class PathTest
  */
 class PathTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var array
+     */
     protected $excludedPaths = [
         '/user',
         '/^\/blog\/.+/',
     ];
 
-    /**
-     * @covers \Janitor\Excluder\Path::__construct
-     * @covers \Janitor\Excluder\Path::addPath
-     * @covers \Janitor\Excluder\Path::isExcluded
-     */
     public function testIsExcludedByString()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Path($this->excludedPaths);
 
-        $this->assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/user'))));
+        self::assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/user'))));
     }
 
-    /**
-     * @covers \Janitor\Excluder\Path::__construct
-     * @covers \Janitor\Excluder\Path::addPath
-     * @covers \Janitor\Excluder\Path::isExcluded
-     */
     public function testIsExcludedByRegex()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Path($this->excludedPaths);
 
-        $this->assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/blog/post'))));
+        self::assertTrue($excluder->isExcluded($request->withUri($request->getUri()->withPath('/blog/post'))));
     }
 
-    /**
-     * @covers \Janitor\Excluder\Path::isExcluded
-     */
     public function testIsNotExcluded()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Path($this->excludedPaths);
 
-        $this->assertFalse($excluder->isExcluded($request->withUri($request->getUri()->withPath('/home'))));
+        self::assertFalse($excluder->isExcluded($request->withUri($request->getUri()->withPath('/home'))));
     }
 }

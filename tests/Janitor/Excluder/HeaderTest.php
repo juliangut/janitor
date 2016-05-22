@@ -13,51 +13,38 @@ use Janitor\Excluder\Header;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * @covers \Janitor\Excluder\Header
+ * Class HeaderTest
  */
 class HeaderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers \Janitor\Excluder\Header::isExcluded
-     */
     public function testIsExcludedExists()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Header('X-Custom-Header');
 
-        $this->assertTrue($excluder->isExcluded($request->withHeader('X-Custom-Header', '')));
+        self::assertTrue($excluder->isExcluded($request->withHeader('X-Custom-Header', '')));
     }
 
-    /**
-     * @covers \Janitor\Excluder\Header::__construct
-     * @covers \Janitor\Excluder\Header::isExcluded
-     */
     public function testIsExcludedByString()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Header('X-Custom-Header', 'my-value');
 
-        $this->assertTrue($excluder->isExcluded($request->withHeader('X-Custom-Header', 'my-value')));
+        self::assertTrue($excluder->isExcluded($request->withHeader('X-Custom-Header', 'my-value')));
     }
 
-    /**
-     * @covers \Janitor\Excluder\Header::isExcluded
-     */
     public function testIsExcludedByRegex()
     {
         $request = ServerRequestFactory::fromGlobals();
         $excluder = new Header('X-Custom-Header', '/^my/');
 
-        $this->assertTrue($excluder->isExcluded($request->withHeader('X-Custom-Header', 'my-value')));
+        self::assertTrue($excluder->isExcluded($request->withHeader('X-Custom-Header', 'my-value')));
     }
 
-    /**
-     * @covers \Janitor\Excluder\Header::isExcluded
-     */
     public function testIsNotExcluded()
     {
         $excluder = new Header('X-Custom-Header');
 
-        $this->assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
+        self::assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
     }
 }

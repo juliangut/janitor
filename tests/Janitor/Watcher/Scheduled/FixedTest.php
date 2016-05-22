@@ -12,36 +12,30 @@ namespace Janitor\Test\Watcher\Scheduled;
 use Janitor\Watcher\Scheduled\Fixed;
 
 /**
- * @covers \Janitor\Watcher\Scheduled\Fixed
+ * Class FixedTest
  */
 class FixedTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Fixed
+     */
     protected $watcher;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->watcher = new Fixed('yesterday', 'tomorrow');
     }
 
-    /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
-     * @covers \Janitor\Watcher\Scheduled\Fixed::getScheduledTimes
-     */
     public function testDefaults()
     {
-        $this->assertTrue($this->watcher->isActive());
-        $this->assertFalse($this->watcher->isScheduled());
-        $this->assertEquals([], $this->watcher->getScheduledTimes());
+        self::assertTrue($this->watcher->isActive());
+        self::assertFalse($this->watcher->isScheduled());
+        self::assertEquals([], $this->watcher->getScheduledTimes());
     }
 
-    /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers \Janitor\Watcher\Scheduled\Fixed::getStart
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @covers \Janitor\Watcher\Scheduled\Fixed::getEnd
-     */
     public function testMutatorsAccessors()
     {
         $start = new \DateTime();
@@ -49,15 +43,12 @@ class FixedTest extends \PHPUnit_Framework_TestCase
         $end->add(new \DateInterval('PT1H'));
 
         $this->watcher->setStart($start);
-        $this->assertEquals($start, $this->watcher->getStart());
+        self::assertEquals($start, $this->watcher->getStart());
         $this->watcher->setEnd($end);
-        $this->assertEquals($end, $this->watcher->getEnd());
+        self::assertEquals($end, $this->watcher->getEnd());
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
-     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidStartDate()
@@ -70,8 +61,6 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
-     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidStartString()
@@ -80,9 +69,6 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
-     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidEndDate()
@@ -95,8 +81,6 @@ class FixedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
-     *
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidEndString()
@@ -104,36 +88,25 @@ class FixedTest extends \PHPUnit_Framework_TestCase
         $this->watcher->setEnd('wow');
     }
 
-    /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
-     * @covers \Janitor\Watcher\Scheduled\Fixed::getScheduledTimes
-     */
     public function testScheduledTime()
     {
-        $this->assertEquals([], $this->watcher->getScheduledTimes());
+        self::assertEquals([], $this->watcher->getScheduledTimes());
 
         $start = new \DateTime();
         $start->add(new \DateInterval('P1D'));
         $end = clone $start;
         $this->watcher->setEnd($end);
         $this->watcher->setStart($start);
-        $this->assertEquals([['start' => $start, 'end' => $end]], $this->watcher->getScheduledTimes());
+        self::assertEquals([['start' => $start, 'end' => $end]], $this->watcher->getScheduledTimes());
 
         $start = new \DateTime();
         $start->sub(new \DateInterval('P1D'));
         $end = clone $start;
         $this->watcher->setStart($start);
         $this->watcher->setEnd($end);
-        $this->assertEquals([], $this->watcher->getScheduledTimes());
+        self::assertEquals([], $this->watcher->getScheduledTimes());
     }
 
-    /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
-     */
     public function testBeforeTime()
     {
         $start = new \DateTime();
@@ -141,16 +114,10 @@ class FixedTest extends \PHPUnit_Framework_TestCase
         $end = clone $start;
         $watcher = new Fixed($start, $end);
 
-        $this->assertFalse($watcher->isActive());
-        $this->assertTrue($watcher->isScheduled());
+        self::assertFalse($watcher->isActive());
+        self::assertTrue($watcher->isScheduled());
     }
 
-    /**
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setStart
-     * @covers \Janitor\Watcher\Scheduled\Fixed::setEnd
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isActive
-     * @covers \Janitor\Watcher\Scheduled\Fixed::isScheduled
-     */
     public function testAfterTime()
     {
         $start = new \DateTime();
@@ -158,7 +125,7 @@ class FixedTest extends \PHPUnit_Framework_TestCase
         $end = clone $start;
         $watcher = new Fixed($start, $end);
 
-        $this->assertFalse($watcher->isActive());
-        $this->assertFalse($watcher->isScheduled());
+        self::assertFalse($watcher->isActive());
+        self::assertFalse($watcher->isScheduled());
     }
 }

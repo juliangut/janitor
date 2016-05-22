@@ -35,6 +35,8 @@ class File implements WatcherInterface
      * Set file path.
      *
      * @param string $file
+     *
+     * @return $this
      */
     public function setFile($file)
     {
