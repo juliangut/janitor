@@ -49,7 +49,14 @@ abstract class AbstractScheduled implements ScheduledWatcher
                 $timeZone = $timeZoneName;
             }
 
-            $timeZone = @timezone_open((string) $timeZone);
+            try {
+                $timeZone = timezone_open((string) $timeZone);
+            // @codeCoverageIgnoreStart
+            } catch (\Exception $exception) {
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
+            }
+            // @codeCoverageIgnoreEnd
+
             if ($timeZone === false) {
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
             }

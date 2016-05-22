@@ -15,7 +15,7 @@ Janitor is a ready to use PSR7 package that provides you with an easy configurab
 
 Set several conditions that will be checked to determine if the maintenance handler should be triggered. This conditions are of two kinds, 'activation' conditions (named `watchers`) and conditions to bypass the normal execution (named `excluders`).
 
-Already builtin watchers and excluders allows you to cover a wide range of situations so you can drop Janitor in and start in no time, but at the same time it's very easy to create your own conditions if needed.
+Already builtin watchers and excluders allows you to cover a wide range of situations so you can drop Janitor in and start in no time, but at the same time it's very easy to create your own conditions if needed by implementing the corresponding interface.
 
 Once Janitor has determined maintenance mode is active it let you use your handler to get a response ready for the user or you can let Janitor handle it all by itself (a nicely formatted 503 response).
 
@@ -102,7 +102,7 @@ $envWatcher = new \Janitor\Watcher\Environment('maintenance', 'ON');
 $envWatcher->isActive();
 ```
 
-### Scheduled watchers
+#### Scheduled watchers
 
 Scheduled watchers are a special type of watchers that identify a point in time in the future for a maintenance period.
 
