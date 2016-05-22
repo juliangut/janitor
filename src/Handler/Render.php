@@ -58,7 +58,9 @@ class Render implements HandlerInterface
         $body->write($content);
 
         if ($watcher instanceof ScheduledWatcher) {
-            $response = $response->withHeader('Expires', $watcher->getEnd()->format('D, d M Y H:i:s e'));
+            $response = $response
+                ->withHeader('Expires', $watcher->getEnd()->format('D, d M Y H:i:s e'))
+                ->withHeader('Retry-After', $watcher->getEnd()->format('D, d M Y H:i:s e'));
         } else {
             $response = $response->withHeader('Cache-Control', 'max-age=0')
                 ->withHeader('Cache-Control', 'no-cache, must-revalidate')
