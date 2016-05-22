@@ -44,9 +44,7 @@ class IP implements ExcluderInterface
         }
 
         foreach ($ips as $ipAddress) {
-            if (trim($ipAddress) !== '') {
-                $this->addIP($ipAddress);
-            }
+            $this->addIP($ipAddress);
         }
 
         if (!is_array($trustedProxies)) {
@@ -54,9 +52,7 @@ class IP implements ExcluderInterface
         }
 
         foreach ($trustedProxies as $ipAddress) {
-            if (trim($ipAddress) !== '') {
-                $this->addTrustedProxy($ipAddress);
-            }
+            $this->addTrustedProxy($ipAddress);
         }
     }
 
@@ -71,11 +67,13 @@ class IP implements ExcluderInterface
      */
     public function addIP($ipAddress)
     {
-        if (!$this->isValidIp($ipAddress)) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
-        }
+        if (trim($ipAddress) !== '') {
+            if (!$this->isValidIp($ipAddress)) {
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
+            }
 
-        $this->ips[] = $ipAddress;
+            $this->ips[] = $ipAddress;
+        }
 
         return $this;
     }
@@ -91,11 +89,13 @@ class IP implements ExcluderInterface
      */
     public function addTrustedProxy($ipAddress)
     {
-        if (!$this->isValidIp($ipAddress)) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
-        }
+        if (trim($ipAddress) !== '') {
+            if (!$this->isValidIp($ipAddress)) {
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
+            }
 
-        $this->trustedProxies[] = $ipAddress;
+            $this->trustedProxies[] = $ipAddress;
+        }
 
         return $this;
     }

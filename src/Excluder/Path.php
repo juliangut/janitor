@@ -34,9 +34,7 @@ class Path implements ExcluderInterface
         }
 
         foreach ($paths as $path) {
-            if (trim($path) !== '') {
-                $this->addPath($path);
-            }
+            $this->addPath($path);
         }
     }
 
