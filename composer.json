@@ -1,6 +1,6 @@
 {
   "name": "juliangut/janitor",
-  "description": "Effortless maintenance management",
+  "description": "Effortless maintenance management for PSR7",
   "keywords": [
     "php",
     "maintenance",
