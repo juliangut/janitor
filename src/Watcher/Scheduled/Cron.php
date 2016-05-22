@@ -159,7 +159,7 @@ class Cron extends AbstractScheduled
     public function getStart()
     {
         if (!$this->isActive()) {
-            return null;
+            return;
         }
 
         $now = new \DateTime('now', $this->getTimeZone());
@@ -173,7 +173,7 @@ class Cron extends AbstractScheduled
     public function getEnd()
     {
         if (!$this->isActive()) {
-            return null;
+            return;
         }
 
         $now = new \DateTime('now', $this->getTimeZone());

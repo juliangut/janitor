@@ -10,10 +10,10 @@
 namespace Janitor\Handler;
 
 use Janitor\Handler as HandlerInterface;
-use Janitor\Watcher;
 use Janitor\ScheduledWatcher;
-use Psr\Http\Message\ServerRequestInterface;
+use Janitor\Watcher;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Redirect maintenance handler.

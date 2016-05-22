@@ -12,8 +12,8 @@ namespace Janitor\Test\Handler;
 use Janitor\Handler\Render;
 use Janitor\ScheduledWatcher;
 use Janitor\Watcher;
-use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Class RenderTest
@@ -26,7 +26,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::once())->method('isActive')->will(self::returnValue(false));
         $handler = new Render;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
         self::assertEquals(503, $response->getStatusCode());
@@ -40,7 +40,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::once())->method('isActive')->will(self::returnValue(false));
         $handler = new Render;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
         self::assertEquals('text/html', $response->getHeaderLine('Content-Type'));
@@ -54,7 +54,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
         $handler = new Render;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Accept', 'text/html');
 
@@ -71,7 +71,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
         $handler = new Render;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Accept', 'application/json');
 
@@ -90,7 +90,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
         $handler = new Render;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Accept', 'application/xml');
 
@@ -110,7 +110,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::any())->method('getEnd')->will(self::returnValue(new \DateTime));
         $handler = new Render;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
         self::assertTrue($response->hasHeader('Expires'));

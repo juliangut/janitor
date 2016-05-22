@@ -15,8 +15,8 @@ use Janitor\ScheduledWatcher;
 use Janitor\Watcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Class JanitorTest
@@ -80,7 +80,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     {
         $janitor = $this->janitor;
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),
@@ -102,7 +102,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Accept', 'application/json');
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             $request,
             new Response('php://temp'),
@@ -126,7 +126,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),
@@ -152,7 +152,7 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
         $this->janitor->setAttributeName($customAttributeName);
         self::assertEquals($customAttributeName, $this->janitor->getAttributeName());
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $janitor(
             ServerRequestFactory::fromGlobals(),
             new Response('php://temp'),

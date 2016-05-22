@@ -10,10 +10,10 @@
 namespace Janitor\Handler;
 
 use Janitor\Handler as HandlerInterface;
-use Janitor\Watcher;
 use Janitor\ScheduledWatcher;
-use Psr\Http\Message\ServerRequestInterface;
+use Janitor\Watcher;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Stream;
 
 /**
@@ -83,10 +83,10 @@ class Render implements HandlerInterface
         $message = $this->getMaintenanceMessage($watcher);
 
         return sprintf(
-            "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'>" .
-            "<title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana," .
-            "sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{" .
-            "display:inline-block;width:65px;}</style></head><body><h1>%s</h1>%s</body></html>",
+            '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
+            '<title>%s</title><style>body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,' .
+            'sans-serif;}h1{margin:0;font-size:48px;font-weight:normal;line-height:48px;}strong{' .
+            'display:inline-block;width:65px;}</style></head><body><h1>%s</h1>%s</body></html>',
             $title,
             $title,
             $message
@@ -115,7 +115,7 @@ class Render implements HandlerInterface
     protected function renderXml(Watcher $watcher)
     {
         return sprintf(
-            "<maintenance><message>%s</message></maintenance>",
+            '<maintenance><message>%s</message></maintenance>',
             $this->getMaintenanceMessage($watcher)
         );
     }

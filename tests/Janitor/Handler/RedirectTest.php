@@ -12,8 +12,8 @@ namespace Janitor\Test\Handler;
 use Janitor\Handler\Redirect;
 use Janitor\ScheduledWatcher;
 use Janitor\Watcher;
-use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Class RedirectTest
@@ -25,7 +25,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
         $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
         $handler = new Redirect('http://example.com');
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
         self::assertEquals(302, $response->getStatusCode());
@@ -42,7 +42,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
         $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
         $handler = new Redirect('/maintenance');
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler($request, new Response('php://temp'), $watcher);
 
         self::assertEquals(302, $response->getStatusCode());
@@ -57,7 +57,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
         $watcher->expects(self::once())->method('getEnd')->will(self::returnValue(new \DateTime));
         $handler = new Redirect('http://example.com');
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
+        /* @var \Psr\Http\Message\ResponseInterface $response */
         $response = $handler(ServerRequestFactory::fromGlobals(), new Response('php://temp'), $watcher);
 
         self::assertEquals(302, $response->getStatusCode());

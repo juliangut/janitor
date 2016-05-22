@@ -206,7 +206,7 @@ class Janitor
             }
         }
 
-        return null;
+        return;
     }
 
     /**

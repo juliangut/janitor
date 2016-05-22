@@ -83,7 +83,7 @@ class IP implements ExcluderInterface
      *
      * @param ServerRequestInterface $request
      *
-     * @return string
+     * @return string|null
      */
     protected function determineCurrentIp(ServerRequestInterface $request)
     {
@@ -102,7 +102,7 @@ class IP implements ExcluderInterface
             $headers = $inspectionHeaders;
             while ($trustedIp === null && $header = array_shift($headers)) {
                 if ($request->hasHeader($header)) {
-                    $ipAddress = trim(array_shift(explode(',', $request->getHeaderLine($header))));
+                    $ipAddress = trim(current(explode(',', $request->getHeaderLine($header))));
 
                     if ($this->isValidIp($ipAddress)) {
                         $trustedIp = $ipAddress;
