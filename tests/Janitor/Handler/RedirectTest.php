@@ -1,10 +1,12 @@
 <?php
-/**
- * Effortless maintenance management (http://juliangut.com/janitor)
+
+/*
+ * janitor (http://juliangut.com/janitor).
+ * Effortless maintenance management.
  *
- * @link https://github.com/juliangut/janitor for the canonical source repository
- *
- * @license https://github.com/juliangut/janitor/blob/master/LICENSE
+ * @license BSD-3-Clause
+ * @link https://github.com/juliangut/janitor
+ * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
 namespace Janitor\Test\Handler;
@@ -16,7 +18,7 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class RedirectTest
+ * Class RedirectTest.
  */
 class RedirectTest extends \PHPUnit_Framework_TestCase
 {

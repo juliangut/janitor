@@ -21,7 +21,7 @@
          verbose="true"
 >
     <testsuites>
-        <testsuite name="default">
+        <testsuite name="janitor test suite">
             <directory suffix="Test.php">tests/Janitor/</directory>
         </testsuite>
     </testsuites>
