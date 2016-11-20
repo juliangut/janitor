@@ -14,62 +14,59 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\Environment;
 
 /**
- * Class EnvironmentTest.
+ * Environment variable maintenance status watcher test.
  */
 class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Environment
-     */
-    protected $watcher;
-
-    /**
      * {@inheritdoc}
      */
-    public static function setUpBeforeClass()
-    {
-        putenv('JanitorMaintenance=On');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function tearDownAfterClass()
+    public function tearDown()
     {
         putenv('JanitorMaintenance');
     }
 
     /**
-     * {@inheritdoc}
+     * @expectedException \RuntimeException
      */
-    public function setUp()
+    public function testNoVar()
     {
-        $this->watcher = new Environment('JanitorMaintenance');
+        $watcher = new Environment('');
+
+        $watcher->isActive();
     }
 
     public function testIsNotActive()
     {
-        putenv('JanitorMaintenance=On');
+        $watcher = new Environment('JanitorMaintenance');
 
-        self::assertTrue($this->watcher->isActive());
+        self::assertFalse($watcher->isActive());
 
-        $this->watcher->addVariable('JanitorMaintenance', 'Off');
+        $watcher->addVariable('NoMaintenance', 'active');
+        self::assertFalse($watcher->isActive());
 
-        self::assertFalse($this->watcher->isActive());
+        putenv('JanitorMaintenance=true');
+        $watcher->addVariable('JanitorMaintenance', 'Off');
+        self::assertFalse($watcher->isActive());
 
-        putenv('JanitorMaintenance');
+        putenv('JanitorMaintenance=false');
+        $watcher->addVariable('JanitorMaintenance', true);
+        self::assertFalse($watcher->isActive());
     }
 
     public function testIsActive()
     {
-        self::assertFalse($this->watcher->isActive());
+        $watcher = new Environment('JanitorMaintenance');
+
+        putenv('JanitorMaintenance=true');
+        self::assertTrue($watcher->isActive());
 
         putenv('JanitorMaintenance=On');
+        $watcher->addVariable('JanitorMaintenance', 'On');
+        self::assertTrue($watcher->isActive());
 
-        $this->watcher->addVariable('JanitorMaintenance', 'On');
-
-        self::assertTrue($this->watcher->isActive());
-
-        putenv('JanitorMaintenance');
+        putenv('JanitorMaintenance="yes"');
+        $watcher->addVariable('JanitorMaintenance', 'yes');
+        self::assertTrue($watcher->isActive());
     }
 }

@@ -11,11 +11,10 @@
 
 namespace Janitor\Excluder;
 
-use Janitor\Excluder as ExcluderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Maintenance excluder by path.
+ * Path based maintenance excluder.
  */
 class Path implements ExcluderInterface
 {
@@ -27,16 +26,20 @@ class Path implements ExcluderInterface
     protected $paths = [];
 
     /**
-     * @param string|array|null $paths
+     * Path constructor.
+     *
+     * @param string|array $paths
      */
     public function __construct($paths = null)
     {
-        if (!is_array($paths)) {
+        if ($paths !== null && !is_array($paths)) {
             $paths = [$paths];
         }
 
-        foreach ($paths as $path) {
-            $this->addPath($path);
+        if (is_array($paths)) {
+            foreach ($paths as $path) {
+                $this->addPath($path);
+            }
         }
     }
 
@@ -61,6 +64,10 @@ class Path implements ExcluderInterface
      */
     public function isExcluded(ServerRequestInterface $request)
     {
+        if (!count($this->paths)) {
+            throw new \RuntimeException('No paths defined in path excluder');
+        }
+
         $currentPath = $request->getUri()->getPath();
 
         foreach ($this->paths as $path) {

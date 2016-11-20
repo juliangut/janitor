@@ -9,12 +9,12 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor\Test\Watcher\Scheduled;
+namespace Janitor\Test\Watcher;
 
-use Janitor\Watcher\Scheduled\Cron;
+use Janitor\Watcher\Cron;
 
 /**
- * Class CronTest.
+ * Cron syntax scheduled maintenance status watcher test.
  */
 class CronTest extends \PHPUnit_Framework_TestCase
 {

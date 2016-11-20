@@ -11,11 +11,10 @@
 
 namespace Janitor\Excluder;
 
-use Janitor\Excluder as ExcluderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Maintenance excluder by Basic Authorization.
+ * Basic HTTP authorization maintenance excluder.
  */
 class BasicAuth implements ExcluderInterface
 {
@@ -27,31 +26,35 @@ class BasicAuth implements ExcluderInterface
     protected $users = [];
 
     /**
-     * @param string|array|null $users
-     * @param mixed|null        $password
+     * BasicAuth constructor.
+     *
+     * @param string|array $users
+     * @param mixed        $password
      */
     public function __construct($users = null, $password = null)
     {
-        if (!is_array($users)) {
+        if ($users !== null && !is_array($users)) {
             $users = [$users => $password];
         }
 
-        foreach ($users as $userName => $userPassword) {
-            $this->addUser($userName, $userPassword);
+        if (is_array($users)) {
+            foreach ($users as $userName => $userPassword) {
+                $this->addUser($userName, $userPassword);
+            }
         }
     }
 
     /**
      * Add user.
      *
-     * @param string     $userName
-     * @param mixed|null $password
+     * @param string $userName
+     * @param mixed  $password
      *
      * @return $this
      */
     public function addUser($userName, $password = null)
     {
-        if (trim($userName) !== '') {
+        if (is_string($userName) && trim($userName) !== '') {
             $this->users[trim($userName)] = $password;
         }
 
@@ -60,9 +63,15 @@ class BasicAuth implements ExcluderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function isExcluded(ServerRequestInterface $request)
     {
+        if (!count($this->users)) {
+            throw new \RuntimeException('No users defined in basic authorization excluder');
+        }
+
         $authData = $this->getAuth($request);
 
         foreach ($this->users as $username => $password) {
@@ -83,19 +92,14 @@ class BasicAuth implements ExcluderInterface
      */
     protected function getAuth(ServerRequestInterface $request)
     {
-        $authData = [
-            'username' => null,
-            'password' => null,
-        ];
-
         $authHeader = $request->getHeaderLine('Authorization');
         if (preg_match('/^Basic /', $authHeader)) {
             $auth = explode(':', base64_decode(substr($authHeader, 6)), 2);
 
-            $authData['username'] = $auth[0];
-            $authData['password'] = isset($auth[1]) ? $auth[1] : null;
+            return [
+                'username' => $auth[0],
+                'password' => isset($auth[1]) ? $auth[1] : null,
+            ];
         }
-
-        return $authData;
     }
 }

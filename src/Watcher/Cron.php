@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor\Watcher\Scheduled;
+namespace Janitor\Watcher;
 
 use Cron\CronExpression;
 
@@ -17,7 +17,7 @@ use Cron\CronExpression;
  * Cron syntax scheduled maintenance status watcher.
  *
  * Maintenance mode is considered to be On if current date is in the interval
- * initiated by a crontab expression
+ * initiated by a cron expression
  *
  * Cron expression syntax
  *   *    *    *    *    *    *
@@ -70,9 +70,13 @@ class Cron extends AbstractScheduled
     protected $interval;
 
     /**
+     * Cron constructor.
+     *
      * @param \Cron\CronExpression|string $expression
      * @param \DateInterval|string        $interval
-     * @param mixed                       $timeZone
+     * @param \DateTimeZone|string|int    $timeZone
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($expression, $interval, $timeZone = null)
     {
@@ -163,13 +167,11 @@ class Cron extends AbstractScheduled
      */
     public function getStart()
     {
-        if (!$this->isActive()) {
-            return;
+        if ($this->isActive()) {
+            $now = new \DateTime('now', $this->getTimeZone());
+
+            return $this->expression->getPreviousRunDate($now, 0, true);
         }
-
-        $now = new \DateTime('now', $this->getTimeZone());
-
-        return $this->expression->getPreviousRunDate($now, 0, true);
     }
 
     /**
@@ -177,16 +179,14 @@ class Cron extends AbstractScheduled
      */
     public function getEnd()
     {
-        if (!$this->isActive()) {
-            return;
+        if ($this->isActive()) {
+            $now = new \DateTime('now', $this->getTimeZone());
+
+            $end = $this->expression->getPreviousRunDate($now, 0, true);
+            $end->add($this->interval);
+
+            return $end;
         }
-
-        $now = new \DateTime('now', $this->getTimeZone());
-
-        $end = $this->expression->getPreviousRunDate($now, 0, true);
-        $end->add($this->interval);
-
-        return $end;
     }
 
     /**

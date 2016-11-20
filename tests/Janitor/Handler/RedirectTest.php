@@ -12,19 +12,21 @@
 namespace Janitor\Test\Handler;
 
 use Janitor\Handler\Redirect;
-use Janitor\ScheduledWatcher;
-use Janitor\Watcher;
+use Janitor\Watcher\ScheduledWatcherInterface;
+use Janitor\Watcher\WatcherInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class RedirectTest.
+ * Redirect maintenance handler test.
  */
 class RedirectTest extends \PHPUnit_Framework_TestCase
 {
-    public function testAbsouteRedirection()
+    public function testAbsoluteRedirection()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = new Redirect('http://example.com');
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
@@ -41,7 +43,9 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withUri($request->getUri()->withHost('mydomain.com'));
 
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = new Redirect('/maintenance');
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
@@ -55,8 +59,13 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
 
     public function testRedirectScheduled()
     {
-        $watcher = $this->getMockBuilder(ScheduledWatcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('getEnd')->will(self::returnValue(new \DateTime));
+        $watcher = $this->getMockBuilder(ScheduledWatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('getEnd')
+            ->will(self::returnValue(new \DateTime));
         $handler = new Redirect('http://example.com');
 
         /* @var \Psr\Http\Message\ResponseInterface $response */

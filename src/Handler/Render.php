@@ -11,15 +11,14 @@
 
 namespace Janitor\Handler;
 
-use Janitor\Handler as HandlerInterface;
-use Janitor\ScheduledWatcher;
-use Janitor\Watcher;
+use Janitor\Watcher\ScheduledWatcherInterface;
+use Janitor\Watcher\WatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Stream;
 
 /**
- * Render HTML page maintenance handler.
+ * HTML render maintenance handler.
  */
 class Render implements HandlerInterface
 {
@@ -29,28 +28,32 @@ class Render implements HandlerInterface
      * @var array
      */
     protected $knownContentTypes = [
-        'application/json',
-        'application/xml',
-        'text/xml',
         'text/html',
+        'text/json',
+        'application/json',
+        'text/xml',
+        'application/xml',
     ];
 
     /**
      * {@inheritdoc}
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, WatcherInterface $watcher)
     {
         $content = '';
 
         $contentType = $this->determineContentType($request);
         switch ($contentType) {
+            case 'text/json':
             case 'application/json':
                 $content = $this->renderJson($watcher);
                 break;
+
             case 'text/xml':
             case 'application/xml':
                 $content = $this->renderXml($watcher);
                 break;
+
             case 'text/html':
                 $content = $this->renderHtml($watcher);
                 break;
@@ -59,7 +62,7 @@ class Render implements HandlerInterface
         $body = new Stream('php://temp', 'r+');
         $body->write($content);
 
-        if ($watcher instanceof ScheduledWatcher) {
+        if ($watcher instanceof ScheduledWatcherInterface) {
             $response = $response
                 ->withHeader('Expires', $watcher->getEnd()->format('D, d M Y H:i:s e'))
                 ->withHeader('Retry-After', $watcher->getEnd()->format('D, d M Y H:i:s e'));
@@ -77,11 +80,11 @@ class Render implements HandlerInterface
     /**
      * Render HTML maintenance message.
      *
-     * @param Watcher $watcher
+     * @param WatcherInterface $watcher
      *
      * @return string
      */
-    protected function renderHtml(Watcher $watcher)
+    protected function renderHtml(WatcherInterface $watcher)
     {
         $title = 'Maintenance';
         $message = $this->getMaintenanceMessage($watcher);
@@ -100,11 +103,11 @@ class Render implements HandlerInterface
     /**
      * Render JSON maintenance message.
      *
-     * @param Watcher $watcher
+     * @param WatcherInterface $watcher
      *
      * @return string
      */
-    protected function renderJson(Watcher $watcher)
+    protected function renderJson(WatcherInterface $watcher)
     {
         return json_encode(['message' => $this->getMaintenanceMessage($watcher)]);
     }
@@ -112,11 +115,11 @@ class Render implements HandlerInterface
     /**
      * Render XML maintenance message.
      *
-     * @param Watcher $watcher
+     * @param WatcherInterface $watcher
      *
      * @return string
      */
-    protected function renderXml(Watcher $watcher)
+    protected function renderXml(WatcherInterface $watcher)
     {
         return sprintf(
             '<maintenance><message>%s</message></maintenance>',
@@ -127,15 +130,15 @@ class Render implements HandlerInterface
     /**
      * Retrieve custom maintenance message.
      *
-     * @param Watcher $watcher
+     * @param WatcherInterface $watcher
      *
      * @return string
      */
-    protected function getMaintenanceMessage(Watcher $watcher)
+    protected function getMaintenanceMessage(WatcherInterface $watcher)
     {
         $message = 'Maintenance mode is not active!';
         if ($watcher->isActive()) {
-            $message = $watcher instanceof ScheduledWatcher
+            $message = $watcher instanceof ScheduledWatcherInterface
                 ? 'Undergoing maintenance tasks until ' . $watcher->getEnd()->format('Y/m/d H:i:s')
                 : 'Undergoing maintenance tasks';
         }
@@ -150,14 +153,22 @@ class Render implements HandlerInterface
      *
      * @return string
      */
-    private function determineContentType(ServerRequestInterface $request)
+    protected function determineContentType(ServerRequestInterface $request)
     {
         $acceptHeader = $request->getHeaderLine('Accept');
         $selectedContentTypes = array_intersect(explode(',', $acceptHeader), $this->knownContentTypes);
+
         if (count($selectedContentTypes)) {
-            return $selectedContentTypes[0];
+            return current($selectedContentTypes);
         }
 
-        return 'text/html';
+        if (preg_match('/\+(json|xml)/', $acceptHeader, $matches)) {
+            $mediaType = 'application/' . $matches[1];
+            if (in_array($mediaType, $this->knownContentTypes, true)) {
+                return $mediaType;
+            }
+        }
+
+        return $this->knownContentTypes[0];
     }
 }

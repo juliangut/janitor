@@ -15,10 +15,20 @@ use Janitor\Excluder\Header;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class HeaderTest.
+ * HTTP request header value maintenance excluder tests.
  */
 class HeaderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testNoHeader()
+    {
+        $excluder = new Header();
+
+        $excluder->isExcluded(ServerRequestFactory::fromGlobals());
+    }
+
     public function testIsExcludedExists()
     {
         $request = ServerRequestFactory::fromGlobals();

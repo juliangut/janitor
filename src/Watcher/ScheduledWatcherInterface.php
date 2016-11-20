@@ -9,12 +9,12 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor;
+namespace Janitor\Watcher;
 
 /**
  * Scheduled maintenance watcher interface.
  */
-interface ScheduledWatcher extends Watcher
+interface ScheduledWatcherInterface extends WatcherInterface
 {
     /**
      * Get scheduled time zone.

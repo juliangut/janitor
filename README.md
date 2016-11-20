@@ -26,7 +26,6 @@ Once Janitor has determined maintenance mode is active it let you use your handl
 Best way to install is using Composer:
 
 ```
-// Assuming composer is installed globally
 composer require juliangut/janitor
 ```
 
@@ -41,10 +40,10 @@ require_once './vendor/autoload.php';
 ```php
 use Janitor\Excluder\IP as IPExcluder;
 use Janitor\Excluder\Path as PathExcluder;
-use Janitor\Janitor;
-use Janitor\Watcher;
+use Janitor\Runner as Janitor;
+use Janitor\Watcher\WatcherInterface;
 use Janitor\Watcher\File as FileWatcher;
-use Janitor\Watcher\Scheduled\Cron as CronWatcher;
+use Janitor\Watcher\Cron as CronWatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
@@ -59,7 +58,7 @@ $excluders = [
     new PathExcluder(['/maintenance', '/^\/admin/']),
 ];
 
-$handler = function (ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher) {
+$handler = function (ServerRequestInterface $request, ResponseInterface $response, WatcherInterface $watcher) {
     $response->getBody()->write('This page is in maintenance mode!');
 
     return $response;
@@ -82,10 +81,10 @@ $response = $janitor(
 
 ## Watchers
 
-Watchers serve different means to activate maintenance mode by verifying conditions to be met.
+Watchers serve different means to activate maintenance mode by verifying conditions.
 
 * `Manual` Just set it to be active. Useful to be used with a configuration parameter.
-* `File` Checks the existence of the provided file.
+* `File` Checks the existence of the provided file(s).
 * `Environment` Checks if an environment variable is set to a value.
 
 ```php
@@ -107,14 +106,14 @@ $envWatcher->isActive();
 Scheduled watchers are a special type of watchers that identify a point in time in the future for a maintenance period.
 
 * `Fixed` Hard set start and/or end times for a scheduled maintenance period.
-* `Cron` Set periodic maintenance periods using [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression) syntax.
+* `Cron` Set maintenance periods using [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression) syntax.
 
 ```php
-$fixedWatcher = new \Janitor\Watcher\Scheduled\Fixed('2026/01/01 00:00:00', '2026/01/01 01:00:00');
-// Active only 1st January 2026 for exactly 1 hour
+$fixedWatcher = new \Janitor\Watcher\Fixed('2026/01/01 00:00:00', '2026/01/01 01:00:00');
+// Active only 1st January 2026 at midnight for exactly 1 hour
 $fixedWatcher->isActive();
 
-$cronWatcher = new \Janitor\Watcher\Scheduled\Cron('0 0 1 * *', new \DateInterval('PT2H'));
+$cronWatcher = new \Janitor\Watcher\Cron('0 0 1 * *', new \DateInterval('PT2H'));
 // Active the first day of each month at midnight during 2 hours
 $cronWatcher->isActive();
 ```
@@ -122,7 +121,7 @@ $cronWatcher->isActive();
 From a scheduled watcher you can get a list of upcoming maintenance periods
 
 ```php
-$cronWatcher = new \Janitor\Watcher\Scheduled\Cron('0 0 1 * *', new \DateInterval('PT2H'));
+$cronWatcher = new \Janitor\Watcher\Cron('0 0 1 * *', new \DateInterval('PT2H'));
 // Array of ['start' => \DateTime, 'end' => \DateTime] of next maintenance periods
 $scheduledPeriods = $cronWatcher->getScheduledTimes(10);
 ```
@@ -177,7 +176,7 @@ _Tipically you'll want to exclude your team's IPs and certain pages such as main
 In order to handle maintenance mode any callable can be provided to `setHandler` method given it follows this signature:
 
 ```php
-function (\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, \Janitor\Watcher $watcher);
+function (\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, \Janitor\Watcher\WatcherInterface $watcher);
 ```
 
 Two really basic handlers are suplied by default to cope with maintenance mode.
@@ -192,8 +191,8 @@ Of the two `Render` will be automatically created and used in case none is provi
 If scheduled watchers are being used they open the option to show a list of future maintenance periods, for example on a page dedicated to inform users about future maintenance actions.
 
 ```php
-use Janitor\Janitor;
-use Janitor\Watcher\Scheduled\Cron;
+use Janitor\Runner as Janitor;
+use Janitor\Watcher\Cron;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -216,7 +215,7 @@ $response = $janitor(
 ### Slim3
 
 ```php
-use Janitor\Janitor;
+use Janitor\Runner as Janitor;
 use Slim\App;
 
 $watchers = [];
@@ -234,7 +233,7 @@ $app->run();
 
 ```php
 use Janitor\Handler\Redirect;
-use Janitor\Janitor;
+use Janitor\Runner as Janitor;
 use Zend\Expresive\AppFactory;
 
 $watchers = [];
@@ -256,7 +255,7 @@ If using Symfony's HttpFoundation you can still add Janitor to your tool belt by
 An example using Silex
 
 ```php
-use Janitor\Janitor;
+use Janitor\Runner as Janitor;
 use Silex\Application;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;

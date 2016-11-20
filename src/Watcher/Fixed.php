@@ -9,7 +9,7 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor\Watcher\Scheduled;
+namespace Janitor\Watcher;
 
 /**
  * Fixed date scheduled maintenance status watcher.
@@ -36,9 +36,13 @@ class Fixed extends AbstractScheduled
     protected $end;
 
     /**
-     * @param mixed $start
-     * @param mixed $end
-     * @param mixed $timeZone
+     * Fixed constructor.
+     *
+     * @param \DateTime|string         $start
+     * @param \DateTime|string         $end
+     * @param \DateTimeZone|string|int $timeZone
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($start, $end, $timeZone = null)
     {
@@ -52,7 +56,7 @@ class Fixed extends AbstractScheduled
     /**
      * Set scheduled start time.
      *
-     * @param mixed $start
+     * @param \DateTime|string $start
      *
      * @throws \InvalidArgumentException
      *
@@ -88,7 +92,7 @@ class Fixed extends AbstractScheduled
     /**
      * Set scheduled end time.
      *
-     * @param mixed $end
+     * @param \DateTime|string $end
      *
      * @throws \InvalidArgumentException
      *

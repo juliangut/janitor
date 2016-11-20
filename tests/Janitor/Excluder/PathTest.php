@@ -15,7 +15,7 @@ use Janitor\Excluder\Path;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class PathTest.
+ * Path based maintenance excluder test.
  */
 class PathTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +26,16 @@ class PathTest extends \PHPUnit_Framework_TestCase
         '/user',
         '/^\/blog\/.+/',
     ];
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testNoPath()
+    {
+        $excluder = new Path();
+
+        $excluder->isExcluded(ServerRequestFactory::fromGlobals());
+    }
 
     public function testIsExcludedByString()
     {

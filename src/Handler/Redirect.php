@@ -11,9 +11,8 @@
 
 namespace Janitor\Handler;
 
-use Janitor\Handler as HandlerInterface;
-use Janitor\ScheduledWatcher;
-use Janitor\Watcher;
+use Janitor\Watcher\ScheduledWatcherInterface;
+use Janitor\Watcher\WatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -25,6 +24,8 @@ class Redirect implements HandlerInterface
     private $location;
 
     /**
+     * Redirect constructor.
+     *
      * @param string $location
      */
     public function __construct($location)
@@ -35,9 +36,9 @@ class Redirect implements HandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, WatcherInterface $watcher)
     {
-        if ($watcher instanceof ScheduledWatcher) {
+        if ($watcher instanceof ScheduledWatcherInterface) {
             $response = $response->withHeader('Expires', $watcher->getEnd()->format('D, d M Y H:i:s e'));
         } else {
             $response = $response->withHeader('Cache-Control', 'max-age=0')

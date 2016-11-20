@@ -9,14 +9,12 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor\Watcher\Scheduled;
-
-use Janitor\ScheduledWatcher;
+namespace Janitor\Watcher;
 
 /**
- * Class AbstractScheduled.
+ * Abstract scheduled class.
  */
-abstract class AbstractScheduled implements ScheduledWatcher
+abstract class AbstractScheduled implements ScheduledWatcherInterface
 {
     /**
      * Scheduled time zone.
@@ -52,14 +50,8 @@ abstract class AbstractScheduled implements ScheduledWatcher
             }
 
             try {
-                $timeZone = timezone_open((string) $timeZone);
-            // @codeCoverageIgnoreStart
+                $timeZone = new \DateTimeZone((string) $timeZone);
             } catch (\Exception $exception) {
-                throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
-            }
-            // @codeCoverageIgnoreEnd
-
-            if ($timeZone === false) {
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid time zone', $timeZone));
             }
         }

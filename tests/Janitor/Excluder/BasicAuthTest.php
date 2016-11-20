@@ -15,7 +15,7 @@ use Janitor\Excluder\BasicAuth;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class BasicAuthTest.
+ * Basic HTTP authorization maintenance excluder tests.
  */
 class BasicAuthTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,6 +28,16 @@ class BasicAuthTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
+     * @expectedException \RuntimeException
+     */
+    public function testNoUser()
+    {
+        $excluder = new BasicAuth('');
+
+        $excluder->isExcluded(ServerRequestFactory::fromGlobals());
+    }
+
+    /**
      * @dataProvider usersProvider
      */
     public function testIsExcluded($username, $password)
@@ -37,7 +47,7 @@ class BasicAuthTest extends \PHPUnit_Framework_TestCase
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('Authorization', 'Basic ' . base64_encode($authString));
 
-        $excluder = new BasicAuth;
+        $excluder = new BasicAuth('');
         $excluder->addUser($username, $password);
 
         self::assertTrue($excluder->isExcluded($request));

@@ -11,19 +11,19 @@
 
 namespace Janitor\Test;
 
-use Janitor\Excluder;
-use Janitor\Janitor;
-use Janitor\ScheduledWatcher;
-use Janitor\Watcher;
+use Janitor\Excluder\ExcluderInterface;
+use Janitor\Runner as Janitor;
+use Janitor\Watcher\ScheduledWatcherInterface;
+use Janitor\Watcher\WatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class JanitorTest.
+ * Janitor runner tests.
  */
-class JanitorTest extends \PHPUnit_Framework_TestCase
+class RunnerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Janitor
@@ -35,11 +35,21 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(false));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::any())
+            ->method('isActive')
+            ->will(self::returnValue(false));
 
-        $excluder = $this->getMockBuilder(Excluder::class)->disableOriginalConstructor()->getMock();
-        $excluder->expects(self::any())->method('isExcluded')->will(self::returnValue(false));
+        $excluder = $this->getMockBuilder(ExcluderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $excluder
+            ->expects(self::any())
+            ->method('isExcluded')
+            ->will(self::returnValue(false));
 
         $this->janitor = new Janitor([$watcher], [$excluder]);
     }
@@ -67,10 +77,22 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
         $scheduledTimes[] = ['start' => $start, 'end' => $end];
 
         foreach ($scheduledTimes as $times) {
-            $watcher = $this->getMockBuilder(ScheduledWatcher::class)->disableOriginalConstructor()->getMock();
-            $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
-            $watcher->expects(self::any())->method('isScheduled')->will(self::returnValue(true));
-            $watcher->expects(self::any())->method('getScheduledTimes')->will(self::returnValue([$times]));
+            $watcher = $this->getMockBuilder(ScheduledWatcherInterface::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+            $watcher
+                ->expects(self::any())
+                ->method('isActive')
+                ->will(self::returnValue(true));
+            $watcher
+                ->expects(self::any())
+                ->method('isScheduled')
+                ->will(self::returnValue(true));
+            $watcher
+                ->expects(self::any())
+                ->method('getScheduledTimes')
+                ->will(self::returnValue([$times]));
+            /* @var WatcherInterface $watcher */
 
             $this->janitor->addWatcher($watcher);
         }
@@ -97,8 +119,14 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     {
         $janitor = $this->janitor;
 
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::any())
+            ->method('isActive')
+            ->will(self::returnValue(true));
+        /* @var WatcherInterface $watcher */
         $this->janitor->addWatcher($watcher);
 
         $request = ServerRequestFactory::fromGlobals();
@@ -118,8 +146,14 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     {
         $janitor = $this->janitor;
 
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::any())
+            ->method('isActive')
+            ->will(self::returnValue(true));
+        /* @var WatcherInterface $watcher */
         $this->janitor->addWatcher($watcher);
 
         $this->janitor->setHandler(
@@ -142,12 +176,24 @@ class JanitorTest extends \PHPUnit_Framework_TestCase
     {
         $janitor = $this->janitor;
 
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::any())->method('isActive')->will(self::returnValue(true));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::any())
+            ->method('isActive')
+            ->will(self::returnValue(true));
+        /* @var WatcherInterface $watcher */
         $this->janitor->addWatcher($watcher);
 
-        $excluder = $this->getMockBuilder(Excluder::class)->disableOriginalConstructor()->getMock();
-        $excluder->expects(self::once())->method('isExcluded')->will(self::returnValue(true));
+        $excluder = $this->getMockBuilder(ExcluderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $excluder
+            ->expects(self::once())
+            ->method('isExcluded')
+            ->will(self::returnValue(true));
+        /* @var ExcluderInterface $excluder */
         $this->janitor->addExcluder($excluder);
 
         $customAttributeName = 'custom';

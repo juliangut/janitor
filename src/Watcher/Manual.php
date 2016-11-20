@@ -11,8 +11,6 @@
 
 namespace Janitor\Watcher;
 
-use Janitor\Watcher as WatcherInterface;
-
 /**
  * Manual maintenance status watcher.
  */
@@ -26,6 +24,8 @@ class Manual implements WatcherInterface
     protected $active = false;
 
     /**
+     * Manual constructor.
+     *
      * @param bool $active
      */
     public function __construct($active = false)

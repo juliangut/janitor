@@ -12,20 +12,25 @@
 namespace Janitor\Test\Handler;
 
 use Janitor\Handler\Render;
-use Janitor\ScheduledWatcher;
-use Janitor\Watcher;
+use Janitor\Watcher\ScheduledWatcherInterface;
+use Janitor\Watcher\WatcherInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class RenderTest.
+ * HTML render maintenance handler test.
  */
 class RenderTest extends \PHPUnit_Framework_TestCase
 {
     public function testStatus()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('isActive')->will(self::returnValue(false));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('isActive')
+            ->will(self::returnValue(false));
         $handler = new Render;
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
@@ -38,8 +43,13 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderingNotActiveHtml()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('isActive')->will(self::returnValue(false));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('isActive')
+            ->will(self::returnValue(false));
         $handler = new Render;
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
@@ -52,8 +62,13 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderingActiveHtml()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('isActive')
+            ->will(self::returnValue(true));
         $handler = new Render;
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
@@ -69,13 +84,18 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderingActiveJson()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('isActive')
+            ->will(self::returnValue(true));
         $handler = new Render;
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
         $request = ServerRequestFactory::fromGlobals();
-        $request = $request->withHeader('Accept', 'application/json');
+        $request = $request->withHeader('Accept', 'text/html+json');
 
         $response = $handler($request, new Response('php://temp'), $watcher);
 
@@ -88,8 +108,13 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderingActiveXml()
     {
-        $watcher = $this->getMockBuilder(Watcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
+        $watcher = $this->getMockBuilder(WatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('isActive')
+            ->will(self::returnValue(true));
         $handler = new Render;
 
         /* @var \Psr\Http\Message\ResponseInterface $response */
@@ -107,9 +132,17 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderingScheduled()
     {
-        $watcher = $this->getMockBuilder(ScheduledWatcher::class)->disableOriginalConstructor()->getMock();
-        $watcher->expects(self::once())->method('isActive')->will(self::returnValue(true));
-        $watcher->expects(self::any())->method('getEnd')->will(self::returnValue(new \DateTime));
+        $watcher = $this->getMockBuilder(ScheduledWatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $watcher
+            ->expects(self::once())
+            ->method('isActive')
+            ->will(self::returnValue(true));
+        $watcher
+            ->expects(self::any())
+            ->method('getEnd')
+            ->will(self::returnValue(new \DateTime));
         $handler = new Render;
 
         /* @var \Psr\Http\Message\ResponseInterface $response */

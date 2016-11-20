@@ -11,10 +11,8 @@
 
 namespace Janitor\Watcher;
 
-use Janitor\Watcher as WatcherInterface;
-
 /**
- * Environment variable check for maintenance status watcher.
+ * Environment variable maintenance status watcher.
  */
 class Environment implements WatcherInterface
 {
@@ -26,17 +24,21 @@ class Environment implements WatcherInterface
     protected $vars;
 
     /**
+     * Environment constructor.
+     *
      * @param array|string $vars
-     * @param mixed|null   $value
+     * @param mixed        $value
      */
     public function __construct($vars, $value = null)
     {
-        if (!is_array($vars)) {
+        if ($vars !== null && !is_array($vars)) {
             $vars = [$vars => $value];
         }
 
-        foreach ($vars as $varName => $varValue) {
-            $this->addVariable($varName, $varValue);
+        if (is_array($vars)) {
+            foreach ($vars as $varName => $varValue) {
+                $this->addVariable($varName, $varValue);
+            }
         }
     }
 
@@ -62,14 +64,60 @@ class Environment implements WatcherInterface
      */
     public function isActive()
     {
-        foreach ($this->vars as $var => $value) {
-            if ($value === null && getenv($var) !== false) {
+        if (!count($this->vars)) {
+            throw new \RuntimeException('At least one environment variable must be defined');
+        }
+
+        foreach ($this->vars as $variable => $value) {
+            if ($value === null && $this->isEnvVariableDefined($variable)) {
                 return true;
-            } elseif ($value !== null && getenv($var) === $value) {
+            } elseif ($value !== null && $this->getEnvVariableValue($variable) === $value) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Test for environment variable.
+     *
+     * @param string $var
+     *
+     * @return bool
+     */
+    protected function isEnvVariableDefined($variable)
+    {
+        return getenv($variable) !== false;
+    }
+
+    /**
+     * Get environment variable value.
+     *
+     * @param string $variable
+     *
+     * @return mixed
+     */
+    protected function getEnvVariableValue($variable)
+    {
+        $value = getenv($variable);
+
+        if ($value === false) {
+            return;
+        }
+
+        switch (strtolower($value)) {
+            case 'true':
+                return true;
+
+            case 'false':
+                return false;
+        }
+
+        if (preg_match('/^[\'"](.*)[\'"]$/', $value, $matches)) {
+            return $matches[1];
+        }
+
+        return $value;
     }
 }

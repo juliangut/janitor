@@ -9,9 +9,9 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor\Test\Watcher\Scheduled;
+namespace Janitor\Test\Watcher;
 
-use Janitor\Watcher\Scheduled\AbstractScheduled;
+use Janitor\Watcher\AbstractScheduled;
 
 /**
  * Class AbstractScheduledTest.

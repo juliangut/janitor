@@ -9,12 +9,12 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor;
+namespace Janitor\Watcher;
 
 /**
  * Default maintenance watcher interface.
  */
-interface Watcher
+interface WatcherInterface
 {
     /**
      * Get maintenance mode active.

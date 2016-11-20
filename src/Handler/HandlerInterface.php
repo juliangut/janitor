@@ -9,24 +9,25 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor;
+namespace Janitor\Handler;
 
+use Janitor\Watcher\WatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Maintenance handler interface.
  */
-interface Handler
+interface HandlerInterface
 {
     /**
      * Run handler.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * @param Watcher                $watcher
+     * @param WatcherInterface       $watcher
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Watcher $watcher);
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, WatcherInterface $watcher);
 }

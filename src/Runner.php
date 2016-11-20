@@ -11,14 +11,17 @@
 
 namespace Janitor;
 
+use Janitor\Excluder\ExcluderInterface;
 use Janitor\Handler\Render as RenderHandler;
+use Janitor\Watcher\ScheduledWatcherInterface;
+use Janitor\Watcher\WatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Class Janitor.
+ * Janitor runner.
  */
-class Janitor
+class Runner
 {
     /**
      * List of watchers.
@@ -49,10 +52,12 @@ class Janitor
     protected $attributeName;
 
     /**
-     * @param array         $watchers
-     * @param array         $excluders
-     * @param callable|null $handler
-     * @param string        $attributeName
+     * Runner constructor.
+     *
+     * @param array    $watchers
+     * @param array    $excluders
+     * @param callable $handler
+     * @param string   $attributeName
      */
     public function __construct(
         array $watchers = [],
@@ -75,11 +80,11 @@ class Janitor
     /**
      * Add maintenance watcher.
      *
-     * @param Watcher $watcher
+     * @param WatcherInterface $watcher
      *
      * @return $this
      */
-    public function addWatcher(Watcher $watcher)
+    public function addWatcher(WatcherInterface $watcher)
     {
         $this->watchers[] = $watcher;
 
@@ -89,11 +94,11 @@ class Janitor
     /**
      * Add excluder condition.
      *
-     * @param Excluder $excluder
+     * @param ExcluderInterface $excluder
      *
      * @return $this
      */
-    public function addExcluder(Excluder $excluder)
+    public function addExcluder(ExcluderInterface $excluder)
     {
         $this->excluders[] = $excluder;
 
@@ -152,7 +157,7 @@ class Janitor
         $scheduledTimes = [];
 
         foreach ($this->watchers as $watcher) {
-            if ($watcher instanceof ScheduledWatcher && $watcher->isScheduled()) {
+            if ($watcher instanceof ScheduledWatcherInterface && $watcher->isScheduled()) {
                 $scheduledTimes = array_merge($scheduledTimes, $watcher->getScheduledTimes($count));
             }
         }
@@ -160,7 +165,7 @@ class Janitor
         usort(
             $scheduledTimes,
             function ($time1, $time2) {
-                if ($time1['start'] == $time2['start']) {
+                if ($time1['start'] === $time2['start']) {
                     return 0;
                 }
 
@@ -184,9 +189,9 @@ class Janitor
     {
         $activeWatcher = $this->getActiveWatcher();
 
-        if ($activeWatcher instanceof Watcher) {
+        if ($activeWatcher !== null) {
             if (!$this->isExcluded($request)) {
-                return call_user_func_array($this->getHandler(), [$request, $response, $activeWatcher]);
+                return call_user_func($this->getHandler(), $request, $response, $activeWatcher);
             }
 
             $request = $request->withAttribute($this->getAttributeName(), $activeWatcher);
@@ -198,7 +203,7 @@ class Janitor
     /**
      * Get currently active watcher.
      *
-     * @return Watcher|null
+     * @return WatcherInterface
      */
     protected function getActiveWatcher()
     {
@@ -207,8 +212,6 @@ class Janitor
                 return $watcher;
             }
         }
-
-        return;
     }
 
     /**

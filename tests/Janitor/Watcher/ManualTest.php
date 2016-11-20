@@ -14,7 +14,7 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\Manual;
 
 /**
- * Class ManualTest.
+ * Manual maintenance status watcher test.
  */
 class ManualTest extends \PHPUnit_Framework_TestCase
 {

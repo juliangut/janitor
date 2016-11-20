@@ -9,12 +9,12 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor\Test\Watcher\Scheduled;
+namespace Janitor\Test\Watcher;
 
-use Janitor\Watcher\Scheduled\Fixed;
+use Janitor\Watcher\Fixed;
 
 /**
- * Class FixedTest.
+ * Fixed date scheduled maintenance status watcher test.
  */
 class FixedTest extends \PHPUnit_Framework_TestCase
 {

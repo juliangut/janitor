@@ -11,11 +11,10 @@
 
 namespace Janitor\Excluder;
 
-use Janitor\Excluder as ExcluderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Maintenance excluder by request header value.
+ * HTTP request header value maintenance excluder.
  */
 class Header implements ExcluderInterface
 {
@@ -27,25 +26,29 @@ class Header implements ExcluderInterface
     protected $headers;
 
     /**
-     * @param array|string|null $headers
-     * @param string|null       $value
+     * Header constructor.
+     *
+     * @param array|string $headers
+     * @param string       $value
      */
     public function __construct($headers = null, $value = null)
     {
-        if (!is_array($headers)) {
+        if ($headers !== null && !is_array($headers)) {
             $headers = [$headers => $value];
         }
 
-        foreach ($headers as $headerName => $headerValue) {
-            $this->addHeader($headerName, $headerValue);
+        if (is_array($headers)) {
+            foreach ($headers as $headerName => $headerValue) {
+                $this->addHeader($headerName, $headerValue);
+            }
         }
     }
 
     /**
      * Add header.
      *
-     * @param string      $header
-     * @param string|null $value
+     * @param string $header
+     * @param string $value
      *
      * @return $this
      */
@@ -60,14 +63,21 @@ class Header implements ExcluderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function isExcluded(ServerRequestInterface $request)
     {
+        if (!count($this->headers)) {
+            throw new \RuntimeException('No headers defined in header excluder');
+        }
+
         foreach ($this->headers as $header => $value) {
             if ($value === null && $request->hasHeader($header)) {
                 return true;
-            } elseif ($value !== null && (trim($value) === $request->getHeaderLine($header)
-                || @preg_match(trim($value), $request->getHeaderLine($header)))
+            } elseif ($value !== null
+                && (trim($value) === $request->getHeaderLine($header)
+                    || @preg_match(trim($value), $request->getHeaderLine($header)))
             ) {
                 return true;
             }

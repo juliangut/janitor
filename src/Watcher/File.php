@@ -11,31 +11,33 @@
 
 namespace Janitor\Watcher;
 
-use Janitor\Watcher as WatcherInterface;
-
 /**
- * File existance check for maintenance status watcher.
+ * File existence maintenance status watcher.
  */
 class File implements WatcherInterface
 {
     /**
-     * File path.
+     * Files.
      *
-     * @var string
+     * @var array
      */
-    protected $file;
+    protected $files;
 
     /**
-     * @param string|array|null $files
+     * File constructor.
+     *
+     * @param string|array $files
      */
     public function __construct($files = null)
     {
-        if (!is_array($files)) {
+        if ($files !== null && !is_array($files)) {
             $files = [$files];
         }
 
-        foreach ($files as $file) {
-            $this->addFile($file);
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                $this->addFile($file);
+            }
         }
     }
 
@@ -49,7 +51,7 @@ class File implements WatcherInterface
     public function addFile($file)
     {
         if (trim($file) !== '') {
-            $this->file = realpath(trim($file));
+            $this->files[] = trim($file);
         }
 
         return $this;
@@ -57,9 +59,23 @@ class File implements WatcherInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function isActive()
     {
-        return file_exists($this->file) && is_file($this->file);
+        if (!count($this->files)) {
+            throw new \RuntimeException('At least one file path must be defined');
+        }
+
+        foreach ($this->files as $file) {
+            $file = realpath($file);
+
+            if (file_exists($file) && is_file($file)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

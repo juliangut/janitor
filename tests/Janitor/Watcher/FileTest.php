@@ -14,7 +14,7 @@ namespace Janitor\Test\Watcher;
 use Janitor\Watcher\File;
 
 /**
- * Class FileTest.
+ * File existence maintenance status watcher test.
  */
 class FileTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,6 +52,16 @@ class FileTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->watcher = new File(self::$tmpFile);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testNoFiles()
+    {
+        $watcher = new File();
+
+        $watcher->isActive();
     }
 
     public function testIsActive()

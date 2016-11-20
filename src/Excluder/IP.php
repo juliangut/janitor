@@ -11,11 +11,10 @@
 
 namespace Janitor\Excluder;
 
-use Janitor\Excluder as ExcluderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Maintenance excluder by route.
+ * IP based maintenance excluder.
  */
 class IP implements ExcluderInterface
 {
@@ -34,27 +33,33 @@ class IP implements ExcluderInterface
     protected $trustedProxies = [];
 
     /**
-     * @param string|array|null $ips
-     * @param string|array|null $trustedProxies
+     * IP constructor.
+     *
+     * @param string|array $ips
+     * @param string|array $trustedProxies
      *
      * @throws \InvalidArgumentException
      */
     public function __construct($ips = null, $trustedProxies = null)
     {
-        if (!is_array($ips)) {
+        if ($ips !== null && !is_array($ips)) {
             $ips = [$ips];
         }
 
-        foreach ($ips as $ipAddress) {
-            $this->addIP($ipAddress);
+        if (is_array($ips)) {
+            foreach ($ips as $ipAddress) {
+                $this->addIP($ipAddress);
+            }
         }
 
-        if (!is_array($trustedProxies)) {
+        if ($trustedProxies !== null && !is_array($trustedProxies)) {
             $trustedProxies = [$trustedProxies];
         }
 
-        foreach ($trustedProxies as $ipAddress) {
-            $this->addTrustedProxy($ipAddress);
+        if (is_array($trustedProxies)) {
+            foreach ($trustedProxies as $ipAddress) {
+                $this->addTrustedProxy($ipAddress);
+            }
         }
     }
 
@@ -70,7 +75,7 @@ class IP implements ExcluderInterface
     public function addIP($ipAddress)
     {
         if (trim($ipAddress) !== '') {
-            if (!$this->isValidIp($ipAddress)) {
+            if (!$this->isValidIP($ipAddress)) {
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
             }
 
@@ -92,7 +97,7 @@ class IP implements ExcluderInterface
     public function addTrustedProxy($ipAddress)
     {
         if (trim($ipAddress) !== '') {
-            if (!$this->isValidIp($ipAddress)) {
+            if (!$this->isValidIP($ipAddress)) {
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid IP address', $ipAddress));
             }
 
@@ -104,10 +109,16 @@ class IP implements ExcluderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function isExcluded(ServerRequestInterface $request)
     {
-        $currentIP = $this->determineCurrentIp($request);
+        if (!count($this->ips)) {
+            throw new \RuntimeException('No IPs defined in IP excluder');
+        }
+
+        $currentIP = $this->determineCurrentIP($request);
 
         foreach ($this->ips as $ipAddress) {
             if ($ipAddress === $currentIP) {
@@ -123,9 +134,9 @@ class IP implements ExcluderInterface
      *
      * @param ServerRequestInterface $request
      *
-     * @return string|null
+     * @return string
      */
-    protected function determineCurrentIp(ServerRequestInterface $request)
+    protected function determineCurrentIP(ServerRequestInterface $request)
     {
         $inspectionHeaders = [
             'X-Forwarded-For',
@@ -134,7 +145,7 @@ class IP implements ExcluderInterface
             'Client-Ip',
         ];
 
-        $currentIp = $this->getIpFromServerParams($request);
+        $currentIp = $this->getIPFromServerParams($request);
 
         if (!count($this->trustedProxies) || in_array($currentIp, $this->trustedProxies, true)) {
             $trustedIp = null;
@@ -144,7 +155,7 @@ class IP implements ExcluderInterface
                 if ($request->hasHeader($header)) {
                     $ipAddress = trim(current(explode(',', $request->getHeaderLine($header))));
 
-                    if ($this->isValidIp($ipAddress)) {
+                    if ($this->isValidIP($ipAddress)) {
                         $trustedIp = $ipAddress;
                     }
                 }
@@ -163,14 +174,14 @@ class IP implements ExcluderInterface
      *
      * @param ServerRequestInterface $request
      *
-     * @return string|null
+     * @return string
      */
-    private function getIpFromServerParams(ServerRequestInterface $request)
+    private function getIPFromServerParams(ServerRequestInterface $request)
     {
         $currentIp = null;
 
         $serverParams = $request->getServerParams();
-        if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIp($serverParams['REMOTE_ADDR'])) {
+        if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIP($serverParams['REMOTE_ADDR'])) {
             $currentIp = $serverParams['REMOTE_ADDR'];
         }
 
@@ -184,7 +195,7 @@ class IP implements ExcluderInterface
      *
      * @return bool
      */
-    private function isValidIp($ipAddress)
+    private function isValidIP($ipAddress)
     {
         return filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) !== false;
     }

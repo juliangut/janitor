@@ -15,7 +15,7 @@ use Janitor\Excluder\IP;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
- * Class IPTest.
+ * IP based maintenance excluder tests.
  */
 class IPTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,9 +28,20 @@ class IPTest extends \PHPUnit_Framework_TestCase
         '204.79.197.200',
     ];
 
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testNoIP()
+    {
+        $excluder = new IP();
+
+        $excluder->isExcluded(ServerRequestFactory::fromGlobals());
+    }
+
     public function testCreation()
     {
-        $excluder = new IP;
+        $excluder = new IP('');
+        $excluder->addIP('80.80.80.80');
         self::assertFalse($excluder->isExcluded(ServerRequestFactory::fromGlobals()));
     }
 

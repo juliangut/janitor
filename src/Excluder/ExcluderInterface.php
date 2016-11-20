@@ -9,14 +9,14 @@
  * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
-namespace Janitor;
+namespace Janitor\Excluder;
 
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Maintenance excluder interface.
  */
-interface Excluder
+interface ExcluderInterface
 {
     /**
      * Determines if is excluded from maintenance mode.
